@@ -1,13 +1,11 @@
 Username Anarchy
 ======================================
 
-Tools for usernames when penetration testing.
+Author: urbanadventurer
 
-
-
-Useful for:
-* User account/password brute force guessing
-* Username enumeration
+Description:
+Tools for generating usernames when penetration testing.
+Useful for user account/password brute force guessing and username enumeration.
 
 
 Use cases:
@@ -31,8 +29,9 @@ Use cases:
 Features:
 	* Plugin architecture for username formats
 	* Format string style username format definitions
-	* Country databases of common first and last names
 	* Substitutions. e.g. when only a first initial and lastname is known (LinkedIn lists users like this), it will attempt all possible first names
+	* Country databases of common first and last names from Familypedia and PublicProfiler
+	* Has the Facebook common first and lastnames lists
 
 
 Extras:
