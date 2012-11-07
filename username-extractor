@@ -7,6 +7,13 @@ require 'pp'
 
 
 
+if  ARGV[0].nil? or not File.readable?(ARGV[0])
+	puts "Usage: #{$0} input-text-file.txt"
+	puts "Extracts names from input text. Uses the Facebook names list."
+	puts
+	exit 1
+end
+
 
 testfile=ARGV[0]
 f=File.open(testfile).read
