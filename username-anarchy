@@ -1,0 +1,603 @@
+#!/usr/bin/env ruby
+# UsernameAnarchy - generate usernames
+# by urbanadventurer
+# 
+# Anna Boom Key
+#
+#
+# TODO
+#
+# put plugins in order, give popularity scores
+# convert accented letters to standard as a 2nd option
+# remove spaces as a 2nd option
+# choose plugin by name or number
+# cmdline format definition - using annakey or %f %l
+# 
+# bugs/issues
+# generates lots of usernames when not required
+#
+#
+#
+# INPUT : take a csv with adjustable columns, eg.
+# default: firstname, lastname
+# allow: firstname, firstinitial, lastname, lastinitial, middlename, middleinitial, gender, country, age, age-range
+# allow some of these columns to be set globally on the cmdline
+#
+#
+# include blank substitutions. eg. "" ?
+# select plugins to use
+# intpu from file
+#
+
+# ideas:
+# order plugins by likeliness
+# sets of plugins, common and all.
+#
+
+#
+# References:
+# https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_popular_given_names
+# http://worldnames.publicprofiler.org/SearchArea.aspx <-- some common countries. top 10 surname and forename
+#
+# top 100 baby names per country:
+# http://www.babynamefacts.com/popularnames/countries.php?country=NZD
+# 
+# Name Parsing:
+# https://secure.wikimedia.org/wikipedia/en/wiki/Capitalization
+# http://cpansearch.perl.org/src/KIMRYAN/Lingua-EN-NameParse-1.28/lib/Lingua/EN/NameParse.pm
+# http://search.cpan.org/~summer/Lingua-EN-NameCase/NameCase.pm
+#
+#
+# how to deal with Robert de Niro?
+# drop the 'de'? remove space : deNiro?
+#
+#
+# https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_common_surnames_in_Oceania
+#
+# google: login username case sensitive surname
+#
+#
+#
+#	implement new format
+
+		# username format %[n0][FMLfmld]
+
+		# %G - Given name, uppercase
+		# %M - Middle name, uppercase
+		# %L - Last name, uppercase
+		# %g - given name, lowercase
+		# %m - middle name, lowercase
+		# %l - last name, lowercase
+		# %d  - 1 digit
+
+		# modifiers for the above
+		# between % and [FMLfmld] add:
+		# n - digit [optional]
+		# 0 - zero padding [optional]
+
+		# %ng - first n characters of given name, lowercase
+		# %nm - first n characters of middle name, lowercase
+		# %nl - first n characters of last name, lowercase
+		# %nG - first n characters of given name, uppercase
+		# %nM - first n characters of middle name, uppercase
+		# %nL - first n characters of last name, uppercase
+
+		# %d  - 1 digit
+		# %1d - 1 char digits, 0-9
+		# %nd - digits of n length, eg. 0,5,10 to 99
+		# %0nd - zero padded n digits. 00,005,010
+
+		# %1g - given name initial, lowercase
+		# %1m - middle initial, lowercase
+		# %1l - last initial, lowercase
+		# %1G - given name initial, uppercase
+		# %1M - Middle initial, uppercase
+		# %1L - Last initial, uppercase
+
+
+## set up load paths. add the directory of the file currently being executed to the load path
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
+    $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
+
+$ROOT_DIR=File.expand_path(File.dirname(__FILE__))
+
+require 'getoptlong'
+require 'pp'
+require 'format-plugins.rb'
+
+class Name
+	attr_accessor :firstname, :lastname, :firstinitial, :lastinitial, :middlename, :middleinitial	
+
+	def init(s)
+		if s[:firstname]
+			@firstname=s[:firstname]
+			@firstinitial=s[:firstname][0..0]
+		end
+
+		if s[:middlename]
+			@middlename=s[:middlename]
+			@middleinitial=s[:middlename][0..0]
+		end
+
+		if s[:lastname]
+			@lastname=s[:lastname]
+			@lastinitial=s[:lastname][0..0]
+		end
+	end
+
+	def given_name_list()
+		# configure details like country, age range, gender, regex
+		# regex is for stuff like 'starts with G'
+
+		File.open($options[:given_names]).readlines.each {|x| x.strip! }
+	end
+
+	def family_name_list()
+		File.open($options[:family_names]).readlines.each {|x| x.strip! }
+	end
+
+	def format_anna(s)
+		format(s,"abk")
+	end
+
+	def format(s, type=nil)
+		# username format
+		# %F - Firstname
+		# %M - Middlename
+		# %L - Lastname
+		# %f - firstname
+		# %m - middlename
+		# %l - lastname
+		# %i.f - first initial
+		# %i.m - middle initial
+		# %i.l - last initial
+		# %i.F - First initial
+		# %i.M - Middle initial
+		# %i.L - Last initial
+
+
+		# natural format
+		# Anna Key
+		# write whatever parts of the name you want. for Joe Bloggs to become jbloggs, write "akey". for JB, write "AK"
+		# less flexible than the username format
+
+		expanded=s.clone
+		# convert from Anna Key format to username format
+		if type == "abk"
+			# this is an array of hashes, not a hash.  Using an array gives us an order of operations. Anna must be substituted before a
+			subs = [{"Anna"=>"%F"},
+				{"Boom"=>"%M"}, 
+				{"Key"=>"%L"},
+
+				{"anna"=>"%f"},
+				{"boom"=>"%m"},
+				{"key"=>"%l"},
+
+				{"A"=>"%i.F"},
+				{"B"=>"%i.M"},
+				{"K"=>"%i.L"},
+
+				{"a"=>"%i.f"},
+				{"b"=>"%i.m"},
+				{"k"=>"%i.l"},
+				]
+			subs.each {|x| x.each {|from,to| expanded.gsub!(from,to); }}
+		end
+
+		subs={	"%F"=>@firstname ? @firstname : "%Givenname",
+			"%M"=>@middlename ? @middlename : "%Givenname",
+			"%L"=>@lastname ? @lastname: "%Surname",
+
+			"%f"=>@firstname ? @firstname.downcase : "%givenname",
+			"%m"=>@middlename ? @middlename.downcase : "%givenname",
+			"%l"=>@lastname ? @lastname.downcase : "%surname",
+
+			"%i.F"=>@firstinitial ? @firstinitial : "%A-Z",
+			"%i.M"=>@middleinitial ? @middleinitial : "%A-Z",
+			"%i.L"=>@lastinitial ? @lastinitial : "%A-Z",
+
+			"%i.f"=>@firstinitial ? @firstinitial.downcase : "%a-z",
+			"%i.m"=>@middleinitial ? @middleinitial.downcase : "%a-z",
+			"%i.l"=>@lastinitial ? @lastinitial.downcase : "%a-z",
+		}
+		subs.each {|from,to| expanded.gsub!(from,to); }
+
+		expanded=[expanded] if expanded.class==String 
+
+		# substitution
+		if $options[:substitute]
+			while expanded.map {|x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
+				expanded=expanded.map do |e|
+					# middle initials
+					if e=~ /%a-z/
+						e=('a'..'z').map {|letter| e.sub('%a-z',letter) }
+					end
+					if e=~ /%A-Z/
+						e=('A'..'Z').map {|letter| e.sub('%A-Z',letter) }
+					end
+
+					# given names
+					if e=~ /%givenname/
+						e=self.given_name_list.map {|name| e.sub('%givenname',name.downcase) }
+					end
+					if e=~ /%Givenname/
+						e=self.given_name_list.map {|name| e.sub('%Givenname',name) }
+					end
+
+					# given names
+					if e=~ /%surname/
+						e=self.family_name_list.map {|name| e.sub('%surname',name.downcase) }
+					end
+					if e=~ /%Surname/
+						e=self.family_name_list.map {|name| e.sub('%Surname',name) }
+					end
+
+
+					# %DD - Digits, range of 00..99
+					# %D - Digit, range of 0..9
+
+					# numbers - leading 0's?
+					if e=~ /%DD/
+						e=(00..99).map {|num| e.sub('%DD',sprintf("%0.2d",num)) }
+					end
+					if e=~ /%D/
+						e=(0..9).map {|num| e.sub('%D',num.to_s) }
+					end
+					e
+				end
+				expanded.flatten!
+				#pp expanded
+			end
+		elsif expanded.to_a.map {|x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
+			# no substitution so remove it if it require expansion
+			expanded=nil
+		end
+
+		expanded
+	end
+end
+
+
+
+
+
+
+def list_plugins
+	puts "Plugin name".ljust(20)+"\tExample"
+	puts "-" * 80
+
+	person=Name.new
+	person.init({:firstname=>"Anna",:lastname=>"Key"})
+
+	Plugin.registered_plugins.each do |name_generator|
+
+		example = name_generator.generate(person)
+
+		unless example.nil?
+			if example.is_a?(Array)
+				example = example[0..2].join(",")
+			end
+		else
+			example="No example"
+		end
+		puts "#{name_generator.plugin_name.ljust(20)}\t#{example}"
+	end
+end
+
+def load_names_list(filename)
+	# check f is a file and readable
+	raise "#{filename}: No such file" unless File.exists?(filename)
+	raise "#{filename}: Cannot read file" unless File.readable?(filename)
+
+	lines=File.readlines(filename)
+
+	# is it valid? first line must contain 'Firstname,Middlename,Lastname'
+	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname/
+
+	# is it comma or TAB delimited?
+	delimiter="," # by default it's comma
+	delimiter="\t" if lines.first.include?("\t")
+
+	# learn columns
+#attr_accessor :firstname, :lastname, :firstinitial, :lastinitial, :middlename, :middleinitial	
+
+	column_names = {"firstname"=>:firstname,
+			"lastname"=>:lastname,
+			"firstinitial"=>:firstinitial,
+			"lastinitial"=>:lastinitial,
+			"middlename"=>:middlename,
+			"middleinitial"=>:middleinitial}
+	columns=[]
+	
+	lines.first.split(delimiter).each_with_index do |header,i|
+			header.downcase!.strip!
+			if column_names.keys.include?(header)
+				columns[i] = column_names[header]
+			else
+				puts "# Ignored unknown column: #{header}"
+			end
+		end
+	# pp columns
+
+	people=lines[1..-1].map do |line|
+		person={}
+		unless line=="\n"
+			line.split(delimiter).each_with_index do |value, i|
+				value.strip!
+				person[columns[i]]=value
+			end
+		end
+		person unless person.empty? # any lines not interpreted become nil
+	end
+
+	people.compact # compact removes the nil's
+end
+
+def recognise_username_format(username)
+	plugins_to_search = Plugin.registered_plugins
+	pp plugins_to_search
+	# only search names that contain letters in our search string as the first letter of the first name or surname
+	letters = $options[:format_to_recognise].split('').sort.uniq
+	File.open($options[:family_names]).readlines.map {|this_familyname|
+		this_familyname.strip!
+		next unless letters.include?(this_familyname[0..0])
+		puts "# Searching #{this_familyname}" if $options[:verbose]
+		File.open($options[:given_names]).readlines.map {|x| x.strip! }.map {|this_givenname|
+			next unless letters.include?(this_givenname[0..0])
+			thisname=Name.new
+			thisname.init(:firstname=>this_givenname,:lastname=>this_familyname)
+			plugins_to_search.each do |name_generator|
+				ret= name_generator.generate(thisname)
+				ret=[ret] if ret.is_a?(String)
+				if ret.is_a?(Array)
+					if ret.include?($options[:format_to_recognise])
+						return name_generator.plugin_name
+					end
+				end
+			end
+	}}
+end
+
+def error(s, severity=nil)
+	usage
+	sev=	case severity
+			when nil
+				sev="Fatal"
+		end
+	puts "#{sev} Error. #{s}"
+	puts
+	exit
+end
+
+def usage
+	puts "Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]"
+	print "
+NAMES
+--input-file, -i=FILE\t\tInput list of names. Can be CSV or TAB delimited.
+\t\t\t\tValid column headings are: firstinitial,firstname,
+\t\t\t\tlastinitial,lastname,middleinitial,middlename
+--auto, -a\t\t\tAutomatically generate names from a country or other lists.
+--country COUNTRY, -C\t\tCOUNTRY can be one of the following datasets:
+\t\t\t\tPublicProfiler:
+\t\t\t\targentina, austria, belgium, canada, china, denmark, france, germany,
+\t\t\t\thungary, india, ireland, italy, luxembourg, netherlands, newzealand,
+\t\t\t\tnorway, poland, serbia, slovenia, spain, sweden, switzerland, uk, us
+\t\t\t\tOther:
+\t\t\t\tFacebook - uses the Facebook top 10,000 first and last names
+--given-names=FILE\t\tDictionary of given names
+--family-names=FILE\t\tDictionary of family names
+--substitute, -s=STATE\t\tControl name substitutions.
+\t\t\t\tValid values are 'on' and 'off'. Default: on
+\t\t\t\tCan substitute any part of a name not available.
+--max-substitutions, -m=NUM\tLimit quantity of substitutions per plugin.
+\t\t\t\tDefault: -1 (Unlimited)
+
+USERNAME FORMAT
+--list-formats, -l\t\tList format plugins
+--select-format, -f=LIST\tSelect format plugins by name. Comma delimited list
+--recognise, -r=USERNAME\tRecognise which format is in use for a username. This
+\t\t\t\tuses the Facebook dataset. Use verbose mode to show progress.
+
+MISC
+--verbose, -v\t\t\tDisplay plugin format comments in output and displays last name searches
+\t\t\t\tin plugin format recogniser
+--help, -h\t\t\tThis help
+"
+
+	puts
+end
+
+$options=Hash.new
+$options[:substitute]=true
+$options[:max_substitutions]=-1 # the max is -1 because -1 is also the end element of an array
+$options[:input_file]=nil
+$options[:selected_plugins]=nil
+$options[:substitute_country]=nil
+$options[:given_names]="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #used for recogniser
+$options[:family_names]="#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
+$options[:no_input_names]=false
+
+opts = GetoptLong.new(
+      [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+      [ '--auto', '-a', GetoptLong::NO_ARGUMENT ],
+      [ '--input-file', '-i', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--list-formats', '-l', GetoptLong::NO_ARGUMENT ],
+      [ '--select-format', '-f', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--recognise', '-r', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--substitute', '-s', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--max-substitutions','-m', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--given-names', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--family-names', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--country','-C', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--verbose','-v', GetoptLong::NO_ARGUMENT ]
+)
+begin    
+	opts.each do |opt, arg|
+		case opt
+			when '-i','--input-file'
+				$options[:input_file]=arg
+			when '-a','--auto'
+				$options[:no_input_names]=true
+			when '-l','--list-formats'
+				list_plugins
+				exit
+			when '-f','--select-format'
+				$options[:selected_plugins]=arg.split(",")
+				$options[:selected_plugins].each {|x|
+					error("Format plugin not found: #{x}.") unless Plugin.registered_plugins.map {|p| p.plugin_name }.include?(x) }
+			when '-m','--max-substitutions'
+				if arg.to_i > 0
+					$options[:max_substitutions]=arg.to_i-1
+				else
+					raise("maximum substitutions must be a positive integer")
+				end
+			when '--given-names'
+				if File.readable?($options[:given_names])
+					$options[:given_names]=arg
+				else
+					raise "Cannot read file: #{arg}"
+				end
+			when '--family-names'
+				if File.readable?($options[:family_names])
+					$options[:family_names]=arg
+				else
+					raise "Cannot read file: #{arg}"
+				end
+			when '--country'
+				dataset=arg.downcase
+				if dataset == "facebook"
+					dataset_file="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt"
+					if File.readable?(dataset_file)
+						$options[:given_names]=dataset_file
+					else
+						raise "Cannot read file: #{dataset_file}"
+						exit
+					end
+					dataset_file="#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt"
+					if File.readable?(dataset_file)
+						$options[:given_names]=dataset_file
+					else
+						raise "Cannot read file: #{dataset_file}"
+						exit
+					end
+
+				else
+					dataset_file="#{$ROOT_DIR}names/publicprofiler/#{arg}-forenames.txt"				
+					if File.readable?(dataset_file)
+						$options[:given_names]=dataset_file
+					else
+						raise "Cannot read file: #{dataset_file}"
+						exit
+					end
+					dataset_file="#{$ROOT_DIR}names/publicprofiler/#{arg}-surnames.txt"
+					if File.readable?(dataset_file)
+						$options[:given_names]=dataset_file
+					else
+						raise "Cannot read file: #{dataset_file}"
+						exit
+					end
+				end
+			when '-s','--substitute'
+				if arg=="on"
+					$options[:substitute]=true 
+				elsif arg=="off"
+					$options[:substitute]=false
+				else
+					raise("invalid argument for --substitute")
+				end
+			when '-v','--verbose'
+				$options[:verbose]=true 
+			when '-r', '--recognise'
+				$options[:format_to_recognise]=arg
+				$options[:no_input_names]=true
+				puts "Recognising #{arg}. This can take a while."
+				format=recognise_username_format($options[:format_to_recognise])
+				if format
+					puts "Username format #{$options[:format_to_recognise]} recognised. Plugin name: #{format}"
+				else
+					puts "Username format #{$options[:format_to_recognise]} unrecognised."
+				end
+				exit
+
+			when '-h','--help'
+				usage
+				exit
+		end
+	end
+rescue GetoptLong::Error => err
+	puts
+	usage
+	exit
+end
+
+people =[] # init the array of people
+
+# get people from the cmdline arguments
+case ARGV.size
+	when 1
+		people << {:firstname=>ARGV[0]}
+	when 2
+		people << {:firstname=>ARGV[0],:lastname=>ARGV[1]}
+	when 3
+		people << {:firstname=>ARGV[0],:middlename=>ARGV[1],:lastname=>ARGV[2]}
+end
+
+# get people from the input file
+if $options[:input_file]
+	people += load_names_list($options[:input_file])
+elsif $options[:no_input_names]	
+	# empty as bro
+	people  << {}
+elsif $options[:no_input_names]==false and people.empty?
+	usage
+	exit
+end
+
+
+
+
+if $options[:selected_plugins].nil?
+	$options[:selected_plugins]=Plugin.registered_plugins
+else
+	$options[:selected_plugins]= Plugin.registered_plugins.map {|x| x if $options[:selected_plugins].include?(x.plugin_name) }.compact
+end
+
+
+# if auto, set up people
+if $options[:no_input_names] and not $options[:format_to_recognise]
+	File.open($options[:family_names]).readlines.map {|this_familyname|
+		this_familyname.strip!
+		File.open($options[:given_names]).readlines.map {|x| x.strip! }.map {|this_givenname|
+			people << {:firstname=>this_givenname, :lastname=>this_familyname}
+	}}
+end
+
+people=people-[{}] unless $options[:no_input_names] # remove the empty hash element in people.
+
+people.each do |person|
+	thisname=Name.new
+	thisname.init(person)
+	$options[:selected_plugins].each do |name_generator|
+		ret= name_generator.generate(thisname)
+
+		if $options[:verbose]
+			# comment note
+			comment_note="# Plugin: #{name_generator.plugin_name}"
+			if ret.is_a?(Array)
+				comment_note+=" substituted #{ret.size}"
+			end
+			puts comment_note
+		end
+
+		if ret.is_a?(String)
+			puts ret
+		elsif ret.is_a?(Array)
+			puts ret[0..$options[:max_substitutions]].join("\n")
+		elsif ret.nil?
+			# we're just skipping over this one. maybe substitute is off.
+		else
+			raise("Unknown type returned from name generator")		
+		end
+	end
+end
+

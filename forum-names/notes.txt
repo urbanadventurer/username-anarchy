@@ -1,0 +1,61 @@
+collect top 1000 names from forums
+
+aim:
+find some generic usernames that are popular across many forums.
+generic means not unique, eg. slayer is generic, urbanadventurer is not.
+
+hypothesis:
+
+simple, generic usernames are registered earlier
+names become more complex as the userbase grows
+eg.
+
+mike, dragon will appear in the top a
+mike79, red_dragon/black_dragon will appear in the top b
+mike_atlanta_79 and white_dragon_eyes will appear in the top c
+
+where a, b and c are standard deviations (or whatever) apart.
+
+----------------------------------------------------------------------
+
+
+phpBB
+
+sign up to http://www.phpbb.com/community/
+	user:	annaboomkey@mailinator.com / M8R-7135mr @mailinator.com 
+	pass:	xe3UlT44
+	prove im human
+
+members list
+http://www.phpbb.com/community/memberlist.php?sid=a11c59c59669bec6d809a606fdf525ba
+
+note: members are listed chronologically
+page to collect:
+http://www.phpbb.com/community/memberlist.php?
+http://www.phpbb.com/community/memberlist.php?start=25
+http://www.phpbb.com/community/memberlist.php?start=50
+times 40 
+
+----------------------------------------------------------------------
+* registration sux
+some phpBB forums dont' require registration for memberlists
+
+
+
+#find a selection of phpBB forums:
+./gggooglescan -d 2 -l phpbb-forums.txt -s 3 -e ./wordlist "phpbb forum"
+
+# scan them with whawteb to check whether they allow unregistered users to view the memberslist
+~/projects/whatweb/whatweb-new/whatweb --log-brief phpbb-forums3.txt  --custom-plugin ":text=>'viewprofile'"  -U 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.1) Gecko/20060111 Firefox/1.5.0.1' --url-suffix "/memberlist.php" -i ./phpbb-forums2.txt
+
+# make a list of those that allow unregistered users to view the memberslist
+grep Custom-Plugin phpbb-forums3.txt | cut -d ' ' -f 1 | sort -u > phpbb-forums4.txt
+
+# write a scraper
+
+# make the list of targets
+cat phpbb-forums4.txt | sed 's/memberlist.php//g' > phpbb-forums5.txt
+
+
+
+

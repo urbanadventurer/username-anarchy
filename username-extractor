@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+require 'pp'
+
+# why do these words appear as names? the, as, an, a, to, she
+# improve results: choose slider of top x english words to blacklist
+# need words in order of popularity for x languages. perhaps from wikipedia.
+
+
+
+
+testfile=ARGV[0]
+f=File.open(testfile).read
+
+# make blacklist most top 1000 common english words
+# remove from black list top x popular names. eg. 'small' is a popular name and a word. 'she' is not
+blacklist = %w|the as an a to she see you or new my net good go do full are all soon he is can be up in so no cool last link hi guy time ok on more nice place bye|
+
+# work out improbable names. eg. both first and last names have a reasonable chance of being natural language. eg. just so.
+
+
+firstnames=File.readlines("names/facebook/firstnames-top10000.txt").each{|x| x.strip! } - blacklist
+lastnames=File.readlines("names/facebook/lastnames-top10000.txt").each{|x| x.strip! } - blacklist
+
+x={}
+oldx={}
+names =[]
+
+f.split(/\W/).map do |word|
+	x={}	
+	word.downcase!
+	x[:word]=word
+	x[:is_firstname]=true if firstnames.include?(word)
+	x[:is_lastname]=true if lastnames.include?(word)
+	# if word is a lastname and previousword is a firstname
+		# found first + lastname. names returned
+
+	if x[:is_lastname] and oldx[:is_firstname]
+		names << [oldx[:word], word]
+	end	
+	# if word is a firstname and previousword is a lastname
+		# found first + lastname. names returned
+
+	if x[:is_firstname] and oldx[:is_lastname]
+		names << [word,oldx[:word]]
+	end	
+
+	# if word is not a name and previousword is a name but unreturned
+		# found name, previousword. names returned
+
+	if x[:is_firstname].nil? and x[:is_lastname].nil? and oldx[:is_lastname]
+		names << ["",oldx[:word]]
+	end	
+
+	if x[:is_firstname].nil? and x[:is_lastname].nil? and oldx[:is_firstname]
+		names << [oldx[:word],""]
+	end	
+
+	# if word is a name but previousword was not
+		# found name. names unreturned
+
+	if oldx[:is_firstname].nil? and oldx[:is_lastname].nil? and x[:is_firstname]
+		names << [word,""]
+	end	
+	if oldx[:is_firstname].nil? and oldx[:is_lastname].nil? and x[:is_lastname]
+		names << ["",word]
+	end	
+
+#	pp x
+	oldx=x.dup
+end
+
+#pp names.sort.uniq
+puts "Firstname,Lastname"
+
+names.sort.uniq.each do | first,last|
+	puts [first,last].join(",")
+end
+
+
