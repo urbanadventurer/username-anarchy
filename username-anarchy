@@ -101,6 +101,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
 
 $ROOT_DIR=File.expand_path(File.dirname(__FILE__))+"/"
 
+$VERSION="0.1"
 
 require 'getoptlong'
 require 'pp'
@@ -372,6 +373,7 @@ end
 
 def usage
 	puts "Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]"
+	puts "Version: #{$VERSION}"
 	print "
 NAMES
 --input-file, -i=FILE\t\tInput list of names. Can be CSV or TAB delimited.
