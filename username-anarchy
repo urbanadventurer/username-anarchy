@@ -255,7 +255,15 @@ class Name
 			expanded=nil
 		end
 
-		expanded
+	# post process - remove spaces and apostrophes
+	if $options[:strip_spaces]=true
+		expanded=expanded.map {|x| x.delete(" ")}
+	end
+	if $options[:strip_apostrophes]=true
+		expanded=expanded.map {|x| x.delete("'")}
+	end
+
+	expanded
 	end
 end
 
@@ -419,6 +427,8 @@ $options[:substitute_country]=nil
 $options[:given_names]="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #used for recogniser
 $options[:family_names]="#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
 $options[:no_input_names]=false
+$options[:strip_spaces]=true
+$options[:strip_apostrophes]=true
 
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
