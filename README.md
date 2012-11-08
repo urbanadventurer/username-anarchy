@@ -143,6 +143,31 @@ Note that -a or --auto is required when you do not specify any input names.
 	Recognising j.smith. This can take a while.
 	Username format j.smith recognised. Plugin name: f.last
 
+
+
+Input Files
+-----------
+To generate usernames for more than one user account you must provide the names in a text file.
+This can be either TAB or CSV delimited.
+
+### Example 1
+	Firstname,Lastname
+	Andrew,Horton
+	Jim, von Grippenvud
+	Peter,O'Toole
+
+### Example 2
+LinkedIn often shows the firstname and last initial
+	firstname,lastinitial
+	andrew,h
+	foo,b
+
+### Example 3
+Mixed set of names
+	firstname,firstinitial,middleinitial,lastname,lastinitial
+	andrew,,,horton,
+	jim,,,,v
+	,p,,o'toole,
 	
 Format String
 --------------

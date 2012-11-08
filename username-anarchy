@@ -302,7 +302,7 @@ def load_names_list(filename)
 	lines=File.readlines(filename)
 
 	# is it valid? first line must contain 'Firstname,Middlename,Lastname'
-	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname/
+	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname|firstname|middlename|lastname|firstinitial|lastinitial|middleinitial|Firstinitial|Lastinitial|Middleinitial/
 
 	# is it comma or TAB delimited?
 	delimiter="," # by default it's comma
@@ -320,7 +320,9 @@ def load_names_list(filename)
 	columns=[]
 	
 	lines.first.split(delimiter).each_with_index do |header,i|
-			header.downcase!.strip!
+			header.downcase!
+			header.strip! unless header.nil?
+
 			if column_names.keys.include?(header)
 				columns[i] = column_names[header]
 			else
