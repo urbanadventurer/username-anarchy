@@ -9,13 +9,10 @@
 #
 # put plugins in order, give popularity scores
 # convert accented letters to standard as a 2nd option
-# remove spaces as a 2nd option
 # choose plugin by name or number
-# cmdline format definition - using annakey or %f %l
 # 
 # bugs/issues
-# generates lots of usernames when not required
-#
+# generates lots of usernames when not required, e..g canterbury-uni format
 #
 #
 # INPUT : take a csv with adjustable columns, eg.
@@ -26,7 +23,6 @@
 #
 # include blank substitutions. eg. "" ?
 # select plugins to use
-# intpu from file
 #
 
 # ideas:
@@ -410,6 +406,7 @@ USERNAME FORMAT
 --select-format, -f=LIST\tSelect format plugins by name. Comma delimited list
 --recognise, -r=USERNAME\tRecognise which format is in use for a username. This
 \t\t\t\tuses the Facebook dataset. Use verbose mode to show progress.
+--format, -F\t\tDefine the user format using either format string or ABK format.
 
 MISC
 --verbose, -v\t\t\tDisplay plugin format comments in output and displays last name searches
@@ -444,6 +441,7 @@ opts = GetoptLong.new(
       [ '--given-names', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--family-names', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--country','-C', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--format','-F', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--verbose','-v', GetoptLong::NO_ARGUMENT ]
 )
 begin    
@@ -460,6 +458,17 @@ begin
 				$options[:selected_plugins]=arg.split(",")
 				$options[:selected_plugins].each {|x|
 					error("Format plugin not found: #{x}.") unless Plugin.registered_plugins.map {|p| p.plugin_name }.include?(x) }
+
+			when '-F','--format'
+				$options[:selected_plugins]="custom"
+				fmt=arg.delete('"')
+				code="
+				Plugin.define \"custom\" do
+					def generate(n)
+						n.format_anna(\"#{fmt}\")
+					end
+				end"
+				eval(code)
 			when '-m','--max-substitutions'
 				if arg.to_i > 0
 					$options[:max_substitutions]=arg.to_i-1

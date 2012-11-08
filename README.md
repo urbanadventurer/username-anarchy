@@ -172,9 +172,53 @@ Mixed set of names
 	jim,,,,v
 	,p,,o'toole,
 	
-Format String
+Custom Plugins
 --------------
+### Command line Plugins
+Define a custom plugin format using either the ABK or format string format.
+Specify the username format with -F or --format
 
+#### Example 1
+	
+	./username-anarchy -F "v-annakey" andrew horton
+	v-andrewhorton
+
+#### Example 2
+
+	./username-anarchy -F "v-%f%l" -a -C poland
+	v-nowaksmith
+	v-nowakjohnson
+	v-nowakjones
+	v-nowakwilliams
+	v-nowakbrown
+	v-nowaklee
+	v-nowakkhan
+	v-nowaksingh
+	v-nowakkumar
+	v-nowakmiller
+	...
+
+### Writing Plugins
+You can add plugins to username anarchy by defining them in format-plugins.rb
+
+This example uses the ABK format.
+
+	Plugin.define "last.first" do
+		def generate(n)
+			n.format_anna("key.anna")
+		end
+	end
+
+This example uses the format string format.
+
+	Plugin.define "first" do
+		def generate(n)
+			n.format("%f")
+		end
+	end
+
+
+### Format Strings
 Username Anarchy provides a method of defining a username format with format strings.
 
 * %F - Firstname
@@ -191,8 +235,7 @@ Username Anarchy provides a method of defining a username format with format str
 * %i.L - Last initial
 
 
-ABK Format
------------
+### ABK Format
 Username Anarchy provides a method of defining a username format with ABK format which translates
 to format strings.
 
