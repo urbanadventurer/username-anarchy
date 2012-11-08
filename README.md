@@ -59,7 +59,7 @@ Username Anarchy is a command line tool.
 	--list-formats, -l              List format plugins
 	--select-format, -f=LIST        Select format plugins by name. Comma delimited list
 	--recognise, -r=USERNAME        Recognise which format is in use for a username. This
-		                        uses the Facebook dataset. Use verbose mode to show progress.
+                                        uses the Facebook dataset. Use verbose mode to show progress.
 
 	MISC
 	--verbose, -v                   Display plugin format comments in output and displays last name searches
