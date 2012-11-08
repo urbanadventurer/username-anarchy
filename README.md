@@ -14,76 +14,77 @@ Use cases
 ---------
 You know the name of a user but not the username format
 
-`./username-anarchy anna key
-anna
-annakey
-anna.key
-annakey
-annak
-a.key
-akey
-kanna
-k.anna
-...
-`
+	./username-anarchy anna key
+	anna
+	annakey
+	anna.key
+	annakey
+	annak
+	a.key
+	akey
+	kanna
+	k.anna
+	...
+
 
 You know the username format and names of users
 
-`./username-anarchy --select-format first.last --input-file ./test-names.txt 
-andrew.horton
-john.mccoll
-blair.strang
-jim.vongrippenvud
-`
+	./username-anarchy --select-format first.last --input-file ./test-names.txt 
+	andrew.horton
+	john.mccoll
+	blair.strang
+	jim.vongrippenvud
+
 
 You know the server is in France
 
-`./username-anarchy --country france --auto|moremartin
-bernard
-thomas
-durand
-richard
-robert
-petit
-moreau
-dubois
-simon
-martinsmith
-martinjohnson
-`
+	./username-anarchy --country france --auto
+	martin
+	bernard
+	thomas
+	durand
+	richard
+	robert
+	petit
+	moreau
+	dubois
+	simon
+	martinsmith
+	martinjohnson
+	...
 
 List username format plugins
 
-`./username-anarchy --list-formats
-Plugin name         	Example
---------------------------------------------------------------------------------
-first               	anna
-firstlast           	annakey
-first.last          	anna.key
-firstlast[8]        	AnnaKey
-firstl              	annak
-f.last              	a.key
-flast               	akey
-lfirst              	kanna
-l.first             	k.anna
-lastf               	keya
-last.f              	key.a
-last.first          	key.anna
-FLast               	AKey
-first1              	anna0,anna1,anna2
-fl                  	ak
-fmlast              	aakey,abkey,ackey
-firstmiddlelast     	annamichaelkey,annajohnkey,annadavidkey
-fml                 	aak,abk,ack
-canterbury-uni      	aak00,aak01,aak02
-FL                  	AK
-FML                 	AAK,ABK,ACK
-`
+	./username-anarchy --list-formats
+	Plugin name         	Example
+	--------------------------------------------------------------------------------
+	first               	anna
+	firstlast           	annakey
+	first.last          	anna.key
+	firstlast[8]        	AnnaKey
+	firstl              	annak
+	f.last              	a.key
+	flast               	akey
+	lfirst              	kanna
+	l.first             	k.anna
+	lastf               	keya
+	last.f              	key.a
+	last.first          	key.anna
+	FLast               	AKey
+	first1              	anna0,anna1,anna2
+	fl                  	ak
+	fmlast              	aakey,abkey,ackey
+	firstmiddlelast     	annamichaelkey,annajohnkey,annadavidkey
+	fml                 	aak,abk,ack
+	canterbury-uni      	aak00,aak01,aak02
+	FL                  	AK
+	FML                 	AAK,ABK,ACK
+
 
 Automatically recognise the username format in use
-`./username-anarchy --recognise anna.key
-Recognising anna.key. This can take a while.
-`
+	./username-anarchy --recognise anna.key
+	Recognising anna.key. This can take a while.
+
 	
 
 
