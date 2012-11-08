@@ -337,7 +337,7 @@ end
 
 def recognise_username_format(username)
 	plugins_to_search = Plugin.registered_plugins
-	pp plugins_to_search
+#	pp plugins_to_search
 	# only search names that contain letters in our search string as the first letter of the first name or surname
 	letters = $options[:format_to_recognise].split('').sort.uniq
 	File.open($options[:family_names]).readlines.map {|this_familyname|
