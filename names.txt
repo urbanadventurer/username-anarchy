@@ -1,5 +1,0 @@
-Firstname,Lastname
-Andrew,Horton
-John,McColl
-Blair,Strang
-Jim, von Grippenvud
