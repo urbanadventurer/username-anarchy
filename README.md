@@ -36,35 +36,36 @@ Username Anarchy is a command line tool.
 	Version: 0.1
 
 	NAMES
-	--input-file, -i=FILE		Input list of names. Can be CSV or TAB delimited.
-					Valid column headings are: firstinitial,firstname,
-					lastinitial,lastname,middleinitial,middlename
-	--auto, -a			Automatically generate names from a country or other lists.
-	--country COUNTRY, -C		COUNTRY can be one of the following datasets:
-					PublicProfiler:
-					argentina, austria, belgium, canada, china, denmark, france, germany,
-					hungary, india, ireland, italy, luxembourg, netherlands, newzealand,
-					norway, poland, serbia, slovenia, spain, sweden, switzerland, uk, us
-					Other:
-					Facebook - uses the Facebook top 10,000 first and last names
-	--given-names=FILE		Dictionary of given names
-	--family-names=FILE		Dictionary of family names
-	--substitute, -s=STATE		Control name substitutions.
-					Valid values are 'on' and 'off'. Default: on
-					Can substitute any part of a name not available.
-	--max-substitutions, -m=NUM	Limit quantity of substitutions per plugin.
-					Default: -1 (Unlimited)
+	--input-file, -i=FILE           Input list of names. Can be CSV or TAB delimited.
+                                        Valid column headings are: firstinitial,firstname,
+                                        lastinitial,lastname,middleinitial,middlename
+	--auto, -a                      Automatically generate names from a country or other lists.
+	--country COUNTRY, -C           COUNTRY can be one of the following datasets:
+                                        PublicProfiler:
+                                        argentina, austria, belgium, canada, china, denmark, france, germany,
+                                        hungary, india, ireland, italy, luxembourg, netherlands, newzealand,
+                                        norway, poland, serbia, slovenia, spain, sweden, switzerland, uk, us
+                                        Other:
+                                        Facebook - uses the Facebook top 10,000 first and last names
+	--given-names=FILE              Dictionary of given names
+	--family-names=FILE             Dictionary of family names
+	--substitute, -s=STATE          Control name substitutions.
+		                        Valid values are 'on' and 'off'. Default: on
+		                        Can substitute any part of a name not available.
+	--max-substitutions, -m=NUM     Limit quantity of substitutions per plugin.
+		                        Default: -1 (Unlimited)
 
 	USERNAME FORMAT
-	--list-formats, -l		List format plugins
-	--select-format, -f=LIST	Select format plugins by name. Comma delimited list
-	--recognise, -r=USERNAME	Recognise which format is in use for a username. This
-					uses the Facebook dataset. Use verbose mode to show progress.
+	--list-formats, -l              List format plugins
+	--select-format, -f=LIST        Select format plugins by name. Comma delimited list
+	--recognise, -r=USERNAME        Recognise which format is in use for a username. This
+		                        uses the Facebook dataset. Use verbose mode to show progress.
 
 	MISC
-	--verbose, -v			Display plugin format comments in output and displays last name searches
-					in plugin format recogniser
-	--help, -h			This help
+	--verbose, -v                   Display plugin format comments in output and displays last name searches
+		                        in plugin format recogniser
+	--help, -h                      This help
+
 
 
 Example Usage
