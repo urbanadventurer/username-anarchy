@@ -139,8 +139,9 @@ Note that -a or --auto is required when you do not specify any input names.
 
 
 ### Automatically recognise the username format in use
-	./username-anarchy --recognise anna.key
-	Recognising anna.key. This can take a while.
+	./username-anarchy --recognise j.smith
+	Recognising j.smith. This can take a while.
+	Username format j.smith recognised. Plugin name: f.last
 
 	
 Format String
