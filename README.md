@@ -14,21 +14,20 @@ Useful for user account/password brute force guessing and username enumeration.
 Use cases
 ---------
 
-* You know the name of a user but not the username format
-	Generate possible usernames:
-	`$ ./username-anarchy anna key`
+You know the name of a user but not the username format
+`$ ./username-anarchy anna key`
 
-* You know the username format and names of users
-	`$ ./username-anarchy --select-format first.last --input-file list-of-names.txt`
+You know the username format and names of users
+`$ ./username-anarchy --select-format first.last --input-file list-of-names.txt`
 
-* You know the server is in France
-	`$ ./username-anarchy --country france --auto`
+You know the server is in France
+`$ ./username-anarchy --country france --auto`
 
-* List username format plugins
-	`$ ./username-anarchy --list-formats`
+List username format plugins
+`$ ./username-anarchy --list-formats`
 
-* Automatically recognise the username format in use
-	`$ ./username-anarchy --recognise anna.key`
+Automatically recognise the username format in use
+`$ ./username-anarchy --recognise anna.key`
 	
 
 Features
