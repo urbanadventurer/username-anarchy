@@ -10,7 +10,7 @@ Tools for generating usernames when penetration testing. *Usernames are half the
 
 This is useful for user account/password brute force guessing and username enumeration when the usernames are based on the users' names.
 
-Common aliases, or self chosen usernames, from forums is also included.
+Common aliases, or self chosen usernames, from forums are also included.
 
 
 Features
@@ -86,11 +86,10 @@ Example Usage
 
 ### You know the username format and names of users
 
-	./username-anarchy --select-format first.last --input-file ./test-names.txt 
+	./username-anarchy --input-file ./test-names.txt  --select-format first.last
 	andrew.horton
-	john.mccoll
-	blair.strang
 	jim.vongrippenvud
+	peter.otoole
 
 
 ### You know the server is in France
