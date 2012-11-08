@@ -159,12 +159,14 @@ This can be either TAB or CSV delimited.
 
 ### Example 2
 LinkedIn often shows the firstname and last initial
+
 	firstname,lastinitial
 	andrew,h
 	foo,b
 
 ### Example 3
 Mixed set of names
+
 	firstname,firstinitial,middleinitial,lastname,lastinitial
 	andrew,,,horton,
 	jim,,,,v
