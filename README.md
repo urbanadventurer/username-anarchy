@@ -6,9 +6,11 @@ Username Anarchy
 
 Description
 ------------
-Tools for generating usernames when penetration testing.
-Useful for user account/password brute force guessing and username enumeration. 
-*Usernames are half the password brute force problem.*
+Tools for generating usernames when penetration testing. *Usernames are half the password brute force problem.*
+
+This is useful for user account/password brute force guessing and username enumeration when the usernames are based on the users' names.
+
+Common aliases, or self chosen usernames, from forums is also included.
 
 
 Features
@@ -178,5 +180,14 @@ to format strings.
 * a - %i.f
 * b - %i.m
 * k - %i.l
+
+
+Forum Usernames
+---------------
+The forum-names folder contains:
+* common-forum-names.csv - A CSV file with forum names and the frequency they appeared with
+* common-forum-names-top10k.txt - The top 10,000 forum names
+* common-forum-names.txt - 1,774,313 forum names
+* phpbb-scraper.rb - a web scraper for usernames on PHPbb forums
 
 
