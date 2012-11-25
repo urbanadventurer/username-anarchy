@@ -2,7 +2,7 @@ Username Anarchy
 ======================================
 
 * Version: 0.2 (November 2012)
-* Author: urbanadventurer
+* Author: urbanadventurer (Andrew Horton)
 
 Description
 ------------
