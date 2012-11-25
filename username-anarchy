@@ -386,7 +386,7 @@ NAMES
 \t\t\t\tValid column headings are: firstinitial,firstname,
 \t\t\t\tlastinitial,lastname,middleinitial,middlename
 --auto, -a\t\t\tAutomatically generate names from a country or other lists.
---country COUNTRY, -C\t\tCOUNTRY can be one of the following datasets:
+--country COUNTRY, -c\t\tCOUNTRY can be one of the following datasets:
 \t\t\t\tPublicProfiler:
 \t\t\t\targentina, austria, belgium, canada, china, denmark, france, germany,
 \t\t\t\thungary, india, ireland, italy, luxembourg, netherlands, newzealand,
@@ -440,7 +440,7 @@ opts = GetoptLong.new(
       [ '--max-substitutions','-m', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--given-names', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--family-names', GetoptLong::REQUIRED_ARGUMENT ],
-      [ '--country','-C', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--country','-c', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--format','-F', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--verbose','-v', GetoptLong::NO_ARGUMENT ]
 )
