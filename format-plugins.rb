@@ -22,7 +22,7 @@ end
 
 Plugin.define "first" do
 	def generate(n)
-		n.format_anna("anna")
+		n.format("%f")
 	end
 end
 
@@ -108,7 +108,6 @@ end
 
 Plugin.define "first1" do
 	def generate(n)
-		#n.format("%f.%l")
 		n.format_anna("anna%D")
 	end
 end

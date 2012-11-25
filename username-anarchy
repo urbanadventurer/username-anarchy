@@ -9,13 +9,10 @@
 #
 # put plugins in order, give popularity scores
 # convert accented letters to standard as a 2nd option
-# remove spaces as a 2nd option
 # choose plugin by name or number
-# cmdline format definition - using annakey or %f %l
 # 
 # bugs/issues
-# generates lots of usernames when not required
-#
+# generates lots of usernames when not required, e..g canterbury-uni format
 #
 #
 # INPUT : take a csv with adjustable columns, eg.
@@ -26,7 +23,6 @@
 #
 # include blank substitutions. eg. "" ?
 # select plugins to use
-# intpu from file
 #
 
 # ideas:
@@ -255,7 +251,15 @@ class Name
 			expanded=nil
 		end
 
-		expanded
+	# post process - remove spaces and apostrophes
+	if $options[:strip_spaces]=true
+		expanded=expanded.map {|x| x.delete(" ")}
+	end
+	if $options[:strip_apostrophes]=true
+		expanded=expanded.map {|x| x.delete("'")}
+	end
+
+	expanded
 	end
 end
 
@@ -294,7 +298,7 @@ def load_names_list(filename)
 	lines=File.readlines(filename)
 
 	# is it valid? first line must contain 'Firstname,Middlename,Lastname'
-	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname/
+	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname|firstname|middlename|lastname|firstinitial|lastinitial|middleinitial|Firstinitial|Lastinitial|Middleinitial/
 
 	# is it comma or TAB delimited?
 	delimiter="," # by default it's comma
@@ -312,7 +316,9 @@ def load_names_list(filename)
 	columns=[]
 	
 	lines.first.split(delimiter).each_with_index do |header,i|
-			header.downcase!.strip!
+			header.downcase!
+			header.strip! unless header.nil?
+
 			if column_names.keys.include?(header)
 				columns[i] = column_names[header]
 			else
@@ -337,7 +343,7 @@ end
 
 def recognise_username_format(username)
 	plugins_to_search = Plugin.registered_plugins
-	pp plugins_to_search
+#	pp plugins_to_search
 	# only search names that contain letters in our search string as the first letter of the first name or surname
 	letters = $options[:format_to_recognise].split('').sort.uniq
 	File.open($options[:family_names]).readlines.map {|this_familyname|
@@ -400,6 +406,7 @@ USERNAME FORMAT
 --select-format, -f=LIST\tSelect format plugins by name. Comma delimited list
 --recognise, -r=USERNAME\tRecognise which format is in use for a username. This
 \t\t\t\tuses the Facebook dataset. Use verbose mode to show progress.
+--format, -F\t\tDefine the user format using either format string or ABK format.
 
 MISC
 --verbose, -v\t\t\tDisplay plugin format comments in output and displays last name searches
@@ -419,6 +426,8 @@ $options[:substitute_country]=nil
 $options[:given_names]="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #used for recogniser
 $options[:family_names]="#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
 $options[:no_input_names]=false
+$options[:strip_spaces]=true
+$options[:strip_apostrophes]=true
 
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
@@ -432,6 +441,7 @@ opts = GetoptLong.new(
       [ '--given-names', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--family-names', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--country','-C', GetoptLong::REQUIRED_ARGUMENT ],
+      [ '--format','-F', GetoptLong::REQUIRED_ARGUMENT ],
       [ '--verbose','-v', GetoptLong::NO_ARGUMENT ]
 )
 begin    
@@ -448,6 +458,17 @@ begin
 				$options[:selected_plugins]=arg.split(",")
 				$options[:selected_plugins].each {|x|
 					error("Format plugin not found: #{x}.") unless Plugin.registered_plugins.map {|p| p.plugin_name }.include?(x) }
+
+			when '-F','--format'
+				$options[:selected_plugins]="custom"
+				fmt=arg.delete('"')
+				code="
+				Plugin.define \"custom\" do
+					def generate(n)
+						n.format_anna(\"#{fmt}\")
+					end
+				end"
+				eval(code)
 			when '-m','--max-substitutions'
 				if arg.to_i > 0
 					$options[:max_substitutions]=arg.to_i-1
