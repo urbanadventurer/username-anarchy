@@ -251,14 +251,15 @@ class Name
 			expanded=nil
 		end
 
-	# post process - remove spaces and apostrophes
-	if $options[:strip_spaces]=true
-		expanded=expanded.map {|x| x.delete(" ")}
+	if expanded
+		# post process - remove spaces and apostrophes
+		if $options[:strip_spaces]=true
+			expanded=expanded.map {|x| x.delete(" ")}
+		end
+		if $options[:strip_apostrophes]=true
+			expanded=expanded.map {|x| x.delete("'")}
+		end
 	end
-	if $options[:strip_apostrophes]=true
-		expanded=expanded.map {|x| x.delete("'")}
-	end
-
 	expanded
 	end
 end
@@ -331,6 +332,7 @@ def load_names_list(filename)
 		person={}
 		unless line=="\n"
 			line.split(delimiter).each_with_index do |value, i|
+				value.downcase!
 				value.strip!
 				person[columns[i]]=value
 			end
