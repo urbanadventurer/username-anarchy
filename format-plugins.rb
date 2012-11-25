@@ -142,12 +142,12 @@ Plugin.define "fml" do
 	end
 end
 
-Plugin.define "canterbury-uni" do
-	def generate(n)
-		#n.firstinitial + n.lastname
-		n.format_anna("abk%DD")
-	end
-end
+#Plugin.define "canterbury-uni" do
+#	def generate(n)
+#		#n.firstinitial + n.lastname
+#		n.format_anna("abk%DD")
+#	end
+#end
 
 Plugin.define "FL" do
 	def generate(n)
