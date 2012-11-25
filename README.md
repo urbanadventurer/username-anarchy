@@ -1,7 +1,7 @@
 Username Anarchy
 ======================================
 
-* Version: 0.1 (November 2012)
+* Version: 0.2 (November 2012)
 * Author: urbanadventurer
 
 Description
@@ -33,14 +33,14 @@ Usage
 Username Anarchy is a command line tool.
 
 	Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]
-	Version: 0.1
+	Version: 0.2
 
 	NAMES
 	--input-file, -i=FILE           Input list of names. Can be CSV or TAB delimited.
                                         Valid column headings are: firstinitial,firstname,
                                         lastinitial,lastname,middleinitial,middlename
 	--auto, -a                      Automatically generate names from a country or other lists.
-	--country COUNTRY, -C           COUNTRY can be one of the following datasets:
+	--country COUNTRY, -c           COUNTRY can be one of the following datasets:
                                         PublicProfiler:
                                         argentina, austria, belgium, canada, china, denmark, france, germany,
                                         hungary, india, ireland, italy, luxembourg, netherlands, newzealand,
@@ -50,7 +50,7 @@ Username Anarchy is a command line tool.
 	--given-names=FILE              Dictionary of given names
 	--family-names=FILE             Dictionary of family names
 	--substitute, -s=STATE          Control name substitutions.
-		                        Valid values are 'on' and 'off'. Default: on
+		                        Valid values are 'on' and 'off'. Default: off
 		                        Can substitute any part of a name not available.
 	--max-substitutions, -m=NUM     Limit quantity of substitutions per plugin.
 		                        Default: -1 (Unlimited)
@@ -233,6 +233,8 @@ Username Anarchy provides a method of defining a username format with format str
 * %i.F - First initial
 * %i.M - Middle initial
 * %i.L - Last initial
+* %D - Digit range 0..9
+* %DD - Digit range 00..99
 
 
 ### ABK Format
