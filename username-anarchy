@@ -390,7 +390,7 @@ NAMES
 --given-names=FILE\t\tDictionary of given names
 --family-names=FILE\t\tDictionary of family names
 --substitute, -s=STATE\t\tControl name substitutions.
-\t\t\t\tValid values are 'on' and 'off'. Default: on
+\t\t\t\tValid values are 'on' and 'off'. Default: off
 \t\t\t\tCan substitute any part of a name not available.
 --max-substitutions, -m=NUM\tLimit quantity of substitutions per plugin.
 \t\t\t\tDefault: -1 (Unlimited)
@@ -411,7 +411,7 @@ MISC
 end
 
 $options=Hash.new
-$options[:substitute]=true
+$options[:substitute]=false
 $options[:max_substitutions]=-1 # the max is -1 because -1 is also the end element of an array
 $options[:input_file]=nil
 $options[:selected_plugins]=nil
