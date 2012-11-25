@@ -182,17 +182,17 @@ class Name
 			subs.each {|x| x.each {|from,to| expanded.gsub!(from,to); }}
 		end
 
-		subs={	"%F"=>@firstname ? @firstname : "%Givenname",
-			"%M"=>@middlename ? @middlename : "%Givenname",
-			"%L"=>@lastname ? @lastname: "%Surname",
+		subs={	"%F"=>@firstname ? Upcase(@firstname) : "%Givenname",
+			"%M"=>@middlename ? Upcase(@middlename) : "%Givenname",
+			"%L"=>@lastname ? Upcase(@lastname): "%Surname",
 
 			"%f"=>@firstname ? @firstname.downcase : "%givenname",
 			"%m"=>@middlename ? @middlename.downcase : "%givenname",
 			"%l"=>@lastname ? @lastname.downcase : "%surname",
 
-			"%i.F"=>@firstinitial ? @firstinitial : "%A-Z",
-			"%i.M"=>@middleinitial ? @middleinitial : "%A-Z",
-			"%i.L"=>@lastinitial ? @lastinitial : "%A-Z",
+			"%i.F"=>@firstinitial ? Upcase(@firstinitial) : "%A-Z",
+			"%i.M"=>@middleinitial ? Upcase(@middleinitial) : "%A-Z",
+			"%i.L"=>@lastinitial ? Upcase(@lastinitial) : "%A-Z",
 
 			"%i.f"=>@firstinitial ? @firstinitial.downcase : "%a-z",
 			"%i.m"=>@middleinitial ? @middleinitial.downcase : "%a-z",
@@ -265,8 +265,9 @@ class Name
 end
 
 
-
-
+def Upcase(s)
+	s[0..0].upcase + s[1..-1].downcase
+end
 
 
 def list_plugins
@@ -274,7 +275,7 @@ def list_plugins
 	puts "-" * 80
 
 	person=Name.new
-	person.init({:firstname=>"Anna",:lastname=>"Key"})
+	person.init({:firstname=>"anna",:middlename=>"boom",:lastname=>"key"})
 
 	Plugin.registered_plugins.each do |name_generator|
 

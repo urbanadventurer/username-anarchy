@@ -155,6 +155,19 @@ Plugin.define "FL" do
 	end
 end
 
+
+Plugin.define "FirstLast" do
+	def generate(n)
+		n.format_anna("%F%L")
+	end
+end
+
+Plugin.define "First.Last" do
+	def generate(n)
+		n.format_anna("%F.%L")
+	end
+end
+
 Plugin.define "FML" do
 	def generate(n)
 =begin
