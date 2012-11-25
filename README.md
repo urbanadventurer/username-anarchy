@@ -3,6 +3,7 @@ Username Anarchy
 
 * Version: 0.2 (November 2012)
 * Author: urbanadventurer (Andrew Horton)
+* Homepage: https://github.com/urbanadventurer/username-anarchy
 
 Description
 ------------

@@ -127,11 +127,11 @@ class Name
 		# configure details like country, age range, gender, regex
 		# regex is for stuff like 'starts with G'
 
-		File.open($options[:given_names]).readlines.each {|x| x.strip! }
+		File.open($options[:given_names]).readlines.map {|x| x.downcase!; x.strip! }
 	end
 
 	def family_name_list()
-		File.open($options[:family_names]).readlines.each {|x| x.strip! }
+		File.open($options[:family_names]).readlines.map {|x| x.downcase!; x.strip! }
 	end
 
 	def format_anna(s)
@@ -592,8 +592,8 @@ end
 # if auto, set up people
 if $options[:no_input_names] and not $options[:format_to_recognise]
 	File.open($options[:family_names]).readlines.map {|this_familyname|
-		this_familyname.strip!
-		File.open($options[:given_names]).readlines.map {|x| x.strip! }.map {|this_givenname|
+		this_familyname.downcase.strip!
+		File.open($options[:given_names]).readlines.map {|x| x.downcase.strip! }.map {|this_givenname|
 			people << {:firstname=>this_givenname, :lastname=>this_familyname}
 	}}
 end
