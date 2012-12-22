@@ -16,76 +16,22 @@
 # allow: firstname, firstinitial, lastname, lastinitial, middlename, middleinitial, gender, country, age, age-range
 # allow some of these columns to be set globally on the cmdline
 #
-#
 # include blank substitutions. eg. "" ?
-# select plugins to use
 #
-
 # ideas:
 # order plugins by likeliness
 # sets of plugins, common and all.
 #
-
-#
-# References:
-# https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_popular_given_names
-# http://worldnames.publicprofiler.org/SearchArea.aspx <-- some common countries. top 10 surname and forename
-#
-# top 100 baby names per country:
-# http://www.babynamefacts.com/popularnames/countries.php?country=NZD
-# 
-# Name Parsing:
-# https://secure.wikimedia.org/wikipedia/en/wiki/Capitalization
-# http://cpansearch.perl.org/src/KIMRYAN/Lingua-EN-NameParse-1.28/lib/Lingua/EN/NameParse.pm
-# http://search.cpan.org/~summer/Lingua-EN-NameCase/NameCase.pm
-#
-#
 # how to deal with Robert de Niro?
 # drop the 'de'? remove space : deNiro?
 #
+# convert accented characters to normal, e.g. á => a, é => e, í => i, ó => o , ú => u
+# Á,á,Ấ,ấ,Ắ,ắ,Ǻ,ǻ,Ǽ,ǽ => a, etc.
 #
 # https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_common_surnames_in_Oceania
 #
 # google: login username case sensitive surname
 #
-#
-#
-#	implement new format
-
-		# username format %[n0][FMLfmld]
-
-		# %G - Given name, uppercase
-		# %M - Middle name, uppercase
-		# %L - Last name, uppercase
-		# %g - given name, lowercase
-		# %m - middle name, lowercase
-		# %l - last name, lowercase
-		# %d  - 1 digit
-
-		# modifiers for the above
-		# between % and [FMLfmld] add:
-		# n - digit [optional]
-		# 0 - zero padding [optional]
-
-		# %ng - first n characters of given name, lowercase
-		# %nm - first n characters of middle name, lowercase
-		# %nl - first n characters of last name, lowercase
-		# %nG - first n characters of given name, uppercase
-		# %nM - first n characters of middle name, uppercase
-		# %nL - first n characters of last name, uppercase
-
-		# %d  - 1 digit
-		# %1d - 1 char digits, 0-9
-		# %nd - digits of n length, eg. 0,5,10 to 99
-		# %0nd - zero padded n digits. 00,005,010
-
-		# %1g - given name initial, lowercase
-		# %1m - middle initial, lowercase
-		# %1l - last initial, lowercase
-		# %1G - given name initial, uppercase
-		# %1M - Middle initial, uppercase
-		# %1L - Last initial, uppercase
-
 
 ## set up load paths. add the directory of the file currently being executed to the load path
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
@@ -432,7 +378,7 @@ USERNAME FORMAT
 --select-format, -f=LIST\tSelect format plugins by name. Comma delimited list
 --recognise, -r=USERNAME\tRecognise which format is in use for a username. This
 \t\t\t\tuses the Facebook dataset. Use verbose mode to show progress.
---format, -F\t\tDefine the user format using either format string or ABK format.
+--format, -F\t\t\tDefine the user format using either format string or ABK format.
 
 MISC
 --verbose, -v\t\t\tDisplay plugin format comments in output and displays last name searches
@@ -629,6 +575,7 @@ people.each do |person|
 	thisname=Name.new
 	thisname.init(person)
 
+	generated_names=[] # used to stop repetition
 	$options[:selected_plugins].each do |name_generator|
 		ret= name_generator.generate(thisname)
 
@@ -640,16 +587,25 @@ people.each do |person|
 			end
 			puts comment_note
 		end
-
+		
 		if ret.is_a?(String)
+			generated_names << ret unless generated_names.include?(ret)
 			puts ret
 		elsif ret.is_a?(Array)
-			puts ret[0..$options[:max_substitutions]].join("\n")
+#			pp ret
+			ret[0..$options[:max_substitutions]].each {|r|
+				unless generated_names.include?(r)
+					generated_names << r
+					puts r
+				end
+			}
+
 		elsif ret.nil?
 			# we're just skipping over this one. maybe substitute is off.
 		else
 			raise("Unknown type returned from name generator")		
 		end
 	end
+#	pp generated_names
 end
 

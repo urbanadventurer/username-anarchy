@@ -124,24 +124,27 @@ Note that -a or --auto is required when you do not specify any input names.
 	first               	anna
 	firstlast           	annakey
 	first.last          	anna.key
-	firstlast[8]        	AnnaKey
+	firstlast[8]        	annakey
 	firstl              	annak
 	f.last              	a.key
 	flast               	akey
 	lfirst              	kanna
 	l.first             	k.anna
-	last               	key
 	lastf               	keya
+	last                	key
 	last.f              	key.a
 	last.first          	key.anna
 	FLast               	AKey
 	first1              	anna0,anna1,anna2
 	fl                  	ak
-	fmlast              	aakey,abkey,ackey
-	firstmiddlelast     	annamichaelkey,annajohnkey,annadavidkey
-	fml                 	aak,abk,ack
+	fmlast              	abkey
+	firstmiddlelast     	annaboomkey
+	fml                 	abk
 	FL                  	AK
-	FML                 	AAK,ABK,ACK
+	FirstLast           	AnnaKey
+	First.Last          	Anna.Key
+	Last                	Key
+	FML                 	ABK
 
 
 ### Automatically recognise the username format in use
