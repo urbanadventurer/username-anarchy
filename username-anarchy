@@ -11,10 +11,6 @@
 # convert accented letters to standard as a 2nd option
 # choose plugin by name or number
 # 
-# bugs/issues
-# generates lots of usernames when not required, e..g canterbury-uni format
-#
-#
 # INPUT : take a csv with adjustable columns, eg.
 # default: firstname, lastname
 # allow: firstname, firstinitial, lastname, lastinitial, middlename, middleinitial, gender, country, age, age-range
@@ -107,6 +103,9 @@ class Name
 	attr_accessor :firstname, :lastname, :firstinitial, :lastinitial, :middlename, :middleinitial	
 
 	def init(s)
+		# if any names are empty strings, convert them to nil
+		s.each_pair {|key,value| s[key]=nil if value==""  }
+
 		if s[:firstname]
 			@firstname=s[:firstname]
 			@firstinitial=s[:firstname][0..0]
@@ -121,7 +120,22 @@ class Name
 			@lastname=s[:lastname]
 			@lastinitial=s[:lastname][0..0]
 		end
+
+		if s[:firstinitial]
+			@firstinitial=s[:firstinitial]
+		end
+
+		if s[:middleinitial]
+			@middleinitial=s[:firstinitial]
+		end
+
+		if s[:lastinitial]
+			@lastinitial=s[:firstinitial]
+		end
+
+		pp [@firstname, @lastname, @firstinitial, @lastinitial, @middlename, @middleinitial] if $options[:verbose]
 	end
+
 
 	def given_name_list()
 		# configure details like country, age range, gender, regex
@@ -179,7 +193,9 @@ class Name
 				{"b"=>"%i.m"},
 				{"k"=>"%i.l"},
 				]
-			subs.each {|x| x.each {|from,to| expanded.gsub!(from,to); }}
+			subs.each {|x| x.each {|from,to| 
+					#pp "from"+from, "to"+to; pp "expanded"+expanded; 
+					expanded.gsub!(from,to); }}
 		end
 
 		subs={	"%F"=>@firstname ? Upcase(@firstname) : "%Givenname",
@@ -198,6 +214,7 @@ class Name
 			"%i.m"=>@middleinitial ? @middleinitial.downcase : "%a-z",
 			"%i.l"=>@lastinitial ? @lastinitial.downcase : "%a-z",
 		}
+		#subs.each {|from,to| expanded.gsub!(from,to); }
 		subs.each {|from,to| expanded.gsub!(from,to); }
 
 		expanded=[expanded] if expanded.class==String 
@@ -266,7 +283,13 @@ end
 
 
 def Upcase(s)
-	s[0..0].upcase + s[1..-1].downcase
+	# what if it's nil?
+#	pp s
+	if s and not s==""
+		s[0..0].upcase + s[1..-1].downcase
+	else
+		nil
+	end
 end
 
 
@@ -604,6 +627,7 @@ people=people-[{}] unless $options[:no_input_names] # remove the empty hash elem
 people.each do |person|
 	thisname=Name.new
 	thisname.init(person)
+
 	$options[:selected_plugins].each do |name_generator|
 		ret= name_generator.generate(thisname)
 

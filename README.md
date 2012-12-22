@@ -9,7 +9,11 @@ Description
 ------------
 Tools for generating usernames when penetration testing. *Usernames are half the password brute force problem.*
 
-This is useful for user account/password brute force guessing and username enumeration when the usernames are based on the users' names.
+This is useful for user account/password brute force guessing and username enumeration when usernames are based on the users' names. By attempting a few weak passwords across a large set of user accounts, user account lockout thresholds can be avoided.
+
+Users' names can be identified through a variety of methods:
+* Web scraping employee names from LinkedIn, Facebook, and other social networks.
+* Extracting metadata from document types such as PDF, Word, Excel, etc. This can be performed with FOCA.
 
 Common aliases, or self chosen usernames, from forums are also included.
 
@@ -126,6 +130,7 @@ Note that -a or --auto is required when you do not specify any input names.
 	flast               	akey
 	lfirst              	kanna
 	l.first             	k.anna
+	last               	key
 	lastf               	keya
 	last.f              	key.a
 	last.first          	key.anna
@@ -135,7 +140,6 @@ Note that -a or --auto is required when you do not specify any input names.
 	fmlast              	aakey,abkey,ackey
 	firstmiddlelast     	annamichaelkey,annajohnkey,annadavidkey
 	fml                 	aak,abk,ack
-	canterbury-uni      	aak00,aak01,aak02
 	FL                  	AK
 	FML                 	AAK,ABK,ACK
 
@@ -263,5 +267,22 @@ The forum-names folder contains:
 * common-forum-names-top10k.txt - The top 10,000 forum names
 * common-forum-names.txt - 1,774,313 forum names
 * phpbb-scraper.rb - a web scraper for usernames on PHPbb forums
+
+
+
+Name Resources
+--------------
+
+### Names
+* http://worldnames.publicprofiler.org/SearchArea.aspx Some common countries. Top 10 surnames and forenames
+* https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_popular_given_names
+* http://www.babynamefacts.com/popularnames/countries.php?country=NZD top 100 baby names per country
+* https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_common_surnames_in_Oceania
+
+### Name Parsing:
+* https://secure.wikimedia.org/wikipedia/en/wiki/Capitalization
+* http://cpansearch.perl.org/src/KIMRYAN/Lingua-EN-NameParse-1.28/lib/Lingua/EN/NameParse.pm
+* http://search.cpan.org/~summer/Lingua-EN-NameCase/NameCase.pm
+
 
 

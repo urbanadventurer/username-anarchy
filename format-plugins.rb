@@ -87,6 +87,13 @@ Plugin.define "lastf" do
 	end
 end
 
+
+Plugin.define "last" do
+	def generate(n)
+		n.format_anna("key")
+	end
+end
+
 Plugin.define "last.f" do
 	def generate(n)
 		n.format_anna("key.a")
@@ -165,6 +172,12 @@ end
 Plugin.define "First.Last" do
 	def generate(n)
 		n.format_anna("%F.%L")
+	end
+end
+
+Plugin.define "Last" do
+	def generate(n)
+		n.format_anna("Key")
 	end
 end
 
