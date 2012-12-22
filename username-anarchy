@@ -478,6 +478,7 @@ begin
 			when '-a','--auto'
 				$options[:no_input_names]=true
 			when '-l','--list-formats'
+				$options[:substitute]=true
 				list_plugins
 				exit
 			when '-f','--select-format'
