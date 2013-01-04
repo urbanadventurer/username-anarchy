@@ -39,7 +39,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
 
 $ROOT_DIR=File.expand_path(File.dirname(__FILE__)) + "/"
 
-$VERSION="0.3-dev"
+$VERSION = "0.3-dev"
 
 require 'getoptlong'
 require 'pp'
