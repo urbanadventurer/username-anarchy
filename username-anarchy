@@ -37,9 +37,9 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
     $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
-$ROOT_DIR=File.expand_path(File.dirname(__FILE__))+"/"
+$ROOT_DIR=File.expand_path(File.dirname(__FILE__)) + "/"
 
-$VERSION="0.2"
+$VERSION="0.3-dev"
 
 require 'getoptlong'
 require 'pp'
@@ -50,33 +50,33 @@ class Name
 
 	def init(s)
 		# if any names are empty strings, convert them to nil
-		s.each_pair {|key,value| s[key]=nil if value==""  }
+		s.each_pair {|key,value| s[key] = nil if value == ""  }
 
 		if s[:firstname]
-			@firstname=s[:firstname]
-			@firstinitial=s[:firstname][0..0]
+			@firstname = s[:firstname]
+			@firstinitial = s[:firstname][0..0]
 		end
 
 		if s[:middlename]
-			@middlename=s[:middlename]
-			@middleinitial=s[:middlename][0..0]
+			@middlename = s[:middlename]
+			@middleinitial = s[:middlename][0..0]
 		end
 
 		if s[:lastname]
-			@lastname=s[:lastname]
-			@lastinitial=s[:lastname][0..0]
+			@lastname = s[:lastname]
+			@lastinitial = s[:lastname][0..0]
 		end
 
 		if s[:firstinitial]
-			@firstinitial=s[:firstinitial]
+			@firstinitial = s[:firstinitial]
 		end
 
 		if s[:middleinitial]
-			@middleinitial=s[:firstinitial]
+			@middleinitial = s[:firstinitial]
 		end
 
 		if s[:lastinitial]
-			@lastinitial=s[:firstinitial]
+			@lastinitial = s[:firstinitial]
 		end
 
 		pp [@firstname, @lastname, @firstinitial, @lastinitial, @middlename, @middleinitial] if $options[:verbose]
@@ -87,15 +87,15 @@ class Name
 		# configure details like country, age range, gender, regex
 		# regex is for stuff like 'starts with G'
 
-		File.open($options[:given_names]).readlines.map {|x| x.downcase!; x.strip! }
+		File.open($options[:given_names]).readlines.map { |x| x.downcase!; x.strip! }
 	end
 
 	def family_name_list()
-		File.open($options[:family_names]).readlines.map {|x| x.downcase!; x.strip! }
+		File.open($options[:family_names]).readlines.map { |x| x.downcase!; x.strip! }
 	end
 
 	def format_anna(s)
-		format(s,"abk")
+		format(s, "abk")
 	end
 
 	def format(s, type=nil)
@@ -119,11 +119,11 @@ class Name
 		# write whatever parts of the name you want. for Joe Bloggs to become jbloggs, write "akey". for JB, write "AK"
 		# less flexible than the username format
 
-		expanded=s.clone
+		expanded = s.clone
 		# convert from Anna Key format to username format
 		if type == "abk"
 			# this is an array of hashes, not a hash.  Using an array gives us an order of operations. Anna must be substituted before a
-			subs = [{"Anna"=>"%F"},
+			subs = [{"Anna" =>"%F"},
 				{"Boom"=>"%M"}, 
 				{"Key"=>"%L"},
 
@@ -161,47 +161,46 @@ class Name
 			"%i.l"=>@lastinitial ? @lastinitial.downcase : "%a-z",
 		}
 		#subs.each {|from,to| expanded.gsub!(from,to); }
-		subs.each {|from,to| expanded.gsub!(from,to); }
+		subs.each { |from,to| expanded.gsub!(from,to); }
 
-		expanded=[expanded] if expanded.class==String 
+		expanded=[expanded] if expanded.class == String 
 
 		# substitution
 		if $options[:substitute]
-			while expanded.map {|x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
+			while expanded.map { |x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
 				expanded=expanded.map do |e|
 					# middle initials
-					if e=~ /%a-z/
-						e=('a'..'z').map {|letter| e.sub('%a-z',letter) }
+					if e =~ /%a-z/
+						e = ('a'..'z').map {|letter| e.sub('%a-z',letter) }
 					end
-					if e=~ /%A-Z/
-						e=('A'..'Z').map {|letter| e.sub('%A-Z',letter) }
+					if e =~ /%A-Z/
+						e = ('A'..'Z').map {|letter| e.sub('%A-Z',letter) }
 					end
 
 					# given names
-					if e=~ /%givenname/
+					if e =~ /%givenname/
 						e=self.given_name_list.map {|name| e.sub('%givenname',name.downcase) }
 					end
-					if e=~ /%Givenname/
+					if e =~ /%Givenname/
 						e=self.given_name_list.map {|name| e.sub('%Givenname',name) }
 					end
 
 					# given names
-					if e=~ /%surname/
+					if e =~ /%surname/
 						e=self.family_name_list.map {|name| e.sub('%surname',name.downcase) }
 					end
-					if e=~ /%Surname/
+					if e =~ /%Surname/
 						e=self.family_name_list.map {|name| e.sub('%Surname',name) }
 					end
-
 
 					# %DD - Digits, range of 00..99
 					# %D - Digit, range of 0..9
 
 					# numbers - leading 0's?
-					if e=~ /%DD/
+					if e =~ /%DD/
 						e=(00..99).map {|num| e.sub('%DD',sprintf("%0.2d",num)) }
 					end
-					if e=~ /%D/
+					if e =~ /%D/
 						e=(0..9).map {|num| e.sub('%D',num.to_s) }
 					end
 					e
@@ -209,17 +208,17 @@ class Name
 				expanded.flatten!
 				#pp expanded
 			end
-		elsif expanded.to_a.map {|x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
+		elsif expanded.to_a.map { |x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
 			# no substitution so remove it if it require expansion
-			expanded=nil
+			expanded = nil
 		end
 
 	if expanded
 		# post process - remove spaces and apostrophes
-		if $options[:strip_spaces]=true
+		if $options[:strip_spaces] = true
 			expanded=expanded.map {|x| x.delete(" ")}
 		end
-		if $options[:strip_apostrophes]=true
+		if $options[:strip_apostrophes] = true
 			expanded=expanded.map {|x| x.delete("'")}
 		end
 	end
@@ -231,7 +230,7 @@ end
 def Upcase(s)
 	# what if it's nil?
 #	pp s
-	if s and not s==""
+	if s and not s == ""
 		s[0..0].upcase + s[1..-1].downcase
 	else
 		nil
@@ -240,11 +239,11 @@ end
 
 
 def list_plugins
-	puts "Plugin name".ljust(20)+"\tExample"
+	puts "Plugin name".ljust(20) + "\tExample"
 	puts "-" * 80
 
 	person=Name.new
-	person.init({:firstname=>"anna",:middlename=>"boom",:lastname=>"key"})
+	person.init({:firstname => "anna", :middlename => "boom", :lastname => "key"})
 
 	Plugin.registered_plugins.each do |name_generator|
 
@@ -255,7 +254,7 @@ def list_plugins
 				example = example[0..2].join(",")
 			end
 		else
-			example="No example"
+			example = "No example"
 		end
 		puts "#{name_generator.plugin_name.ljust(20)}\t#{example}"
 	end
@@ -278,15 +277,15 @@ def load_names_list(filename)
 	# learn columns
 #attr_accessor :firstname, :lastname, :firstinitial, :lastinitial, :middlename, :middleinitial	
 
-	column_names = {"firstname"=>:firstname,
-			"lastname"=>:lastname,
-			"firstinitial"=>:firstinitial,
-			"lastinitial"=>:lastinitial,
-			"middlename"=>:middlename,
-			"middleinitial"=>:middleinitial}
-	columns=[]
+	column_names = {"firstname" => :firstname,
+			"lastname" => :lastname,
+			"firstinitial" => :firstinitial,
+			"lastinitial" => :lastinitial,
+			"middlename" => :middlename,
+			"middleinitial" => :middleinitial}
+	columns = []
 	
-	lines.first.split(delimiter).each_with_index do |header,i|
+	lines.first.split(delimiter).each_with_index do |header, i|
 			header.downcase!
 			header.strip! unless header.nil?
 
@@ -298,13 +297,13 @@ def load_names_list(filename)
 		end
 	# pp columns
 
-	people=lines[1..-1].map do |line|
-		person={}
-		unless line=="\n"
+	people = lines[1..-1].map do |line|
+		person = {}
+		unless line == "\n"
 			line.split(delimiter).each_with_index do |value, i|
 				value.downcase!
 				value.strip!
-				person[columns[i]]=value
+				person[columns[i]] = value
 			end
 		end
 		person unless person.empty? # any lines not interpreted become nil
@@ -318,31 +317,32 @@ def recognise_username_format(username)
 #	pp plugins_to_search
 	# only search names that contain letters in our search string as the first letter of the first name or surname
 	letters = $options[:format_to_recognise].split('').sort.uniq
-	File.open($options[:family_names]).readlines.map {|this_familyname|
+	File.open($options[:family_names]).readlines.map do |this_familyname|
 		this_familyname.strip!
 		next unless letters.include?(this_familyname[0..0])
 		puts "# Searching #{this_familyname}" if $options[:verbose]
-		File.open($options[:given_names]).readlines.map {|x| x.strip! }.map {|this_givenname|
+		File.open($options[:given_names]).readlines.map {|x| x.strip! }.map do |this_givenname|
 			next unless letters.include?(this_givenname[0..0])
-			thisname=Name.new
-			thisname.init(:firstname=>this_givenname,:lastname=>this_familyname)
+			thisname = Name.new
+			thisname.init(:firstname=>this_givenname, :lastname=>this_familyname)
 			plugins_to_search.each do |name_generator|
-				ret= name_generator.generate(thisname)
-				ret=[ret] if ret.is_a?(String)
+				ret = name_generator.generate(thisname)
+				ret = [ret] if ret.is_a?(String)
 				if ret.is_a?(Array)
 					if ret.include?($options[:format_to_recognise])
 						return name_generator.plugin_name
 					end
 				end
 			end
-	}}
+	end
+	end
 end
 
-def error(s, severity=nil)
+def error(s, severity = nil)
 	usage
 	sev=	case severity
-			when nil
-				sev="Fatal"
+		when nil
+			sev = "Fatal"
 		end
 	puts "#{sev} Error. #{s}"
 	puts
@@ -389,17 +389,17 @@ MISC
 	puts
 end
 
-$options=Hash.new
-$options[:substitute]=false
-$options[:max_substitutions]=-1 # the max is -1 because -1 is also the end element of an array
-$options[:input_file]=nil
-$options[:selected_plugins]=nil
-$options[:substitute_country]=nil
-$options[:given_names]="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #used for recogniser
-$options[:family_names]="#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
-$options[:no_input_names]=false
-$options[:strip_spaces]=true
-$options[:strip_apostrophes]=true
+$options = Hash.new
+$options[:substitute] = false
+$options[:max_substitutions] = -1 # the max is -1 because -1 is also the end element of an array
+$options[:input_file] = nil
+$options[:selected_plugins] = nil
+$options[:substitute_country] = nil
+$options[:given_names] = "#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #used for recogniser
+$options[:family_names] = "#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
+$options[:no_input_names] = false
+$options[:strip_spaces] = true
+$options[:strip_apostrophes] = true
 
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
@@ -419,106 +419,105 @@ opts = GetoptLong.new(
 begin    
 	opts.each do |opt, arg|
 		case opt
-			when '-i','--input-file'
-				$options[:input_file]=arg
-			when '-a','--auto'
-				$options[:no_input_names]=true
-			when '-l','--list-formats'
-				$options[:substitute]=true
-				list_plugins
-				exit
-			when '-f','--select-format'
-				$options[:selected_plugins]=arg.split(",")
-				$options[:selected_plugins].each {|x|
-					error("Format plugin not found: #{x}.") unless Plugin.registered_plugins.map {|p| p.plugin_name }.include?(x) }
+		when '-i', '--input-file'
+			$options[:input_file] = arg
+		when '-a', '--auto'
+			$options[:no_input_names] = true
+		when '-l', '--list-formats'
+			$options[:substitute] = true
+			list_plugins
+			exit
+		when '-f', '--select-format'
+			$options[:selected_plugins] = arg.split(",")
+			$options[:selected_plugins].each { |x|
+				error("Format plugin not found: #{x}.") unless Plugin.registered_plugins.map { |p| p.plugin_name }.include?(x) }
 
-			when '-F','--format'
-				$options[:selected_plugins]="custom"
-				fmt=arg.delete('"')
-				code="
-				Plugin.define \"custom\" do
-					def generate(n)
-						n.format_anna(\"#{fmt}\")
-					end
-				end"
-				eval(code)
-			when '-m','--max-substitutions'
-				if arg.to_i > 0
-					$options[:max_substitutions]=arg.to_i-1
-				else
-					raise("maximum substitutions must be a positive integer")
+		when '-F', '--format'
+			$options[:selected_plugins] = "custom"
+			fmt = arg.delete('"')
+			code = "
+			Plugin.define \"custom\" do
+				def generate(n)
+					n.format_anna(\"#{fmt}\")
 				end
-			when '--given-names'
-				if File.readable?($options[:given_names])
-					$options[:given_names]=arg
+			end"
+			eval(code)
+		when '-m','--max-substitutions'
+			if arg.to_i > 0
+				$options[:max_substitutions] = arg.to_i-1
+			else
+				raise("maximum substitutions must be a positive integer")
+			end
+		when '--given-names'
+			if File.readable?($options[:given_names])
+				$options[:given_names] = arg
+			else
+				raise "Cannot read file: #{arg}"
+			end
+		when '--family-names'
+			if File.readable?($options[:family_names])
+				$options[:family_names] = arg
+			else
+				raise "Cannot read file: #{arg}"
+			end
+		when '--country', '-c'
+			dataset = arg.downcase
+			if dataset == "facebook"
+				dataset_file="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt"
+				if File.readable?(dataset_file)
+					$options[:given_names] = dataset_file
 				else
-					raise "Cannot read file: #{arg}"
+					raise "Cannot read file: #{dataset_file}"
+					exit
 				end
-			when '--family-names'
-				if File.readable?($options[:family_names])
-					$options[:family_names]=arg
+				dataset_file = "#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt"
+				if File.readable?(dataset_file)
+					$options[:given_names] = dataset_file
 				else
-					raise "Cannot read file: #{arg}"
+					raise "Cannot read file: #{dataset_file}"
+					exit
 				end
-			when '--country', '-c'
-				dataset=arg.downcase
-				if dataset == "facebook"
-					dataset_file="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt"
-					if File.readable?(dataset_file)
-						$options[:given_names]=dataset_file
-					else
-						raise "Cannot read file: #{dataset_file}"
-						exit
-					end
-					dataset_file="#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt"
-					if File.readable?(dataset_file)
-						$options[:given_names]=dataset_file
-					else
-						raise "Cannot read file: #{dataset_file}"
-						exit
-					end
+				else
+					dataset_file = "#{$ROOT_DIR}names/publicprofiler/#{arg}-forenames.txt"				
+				if File.readable?(dataset_file)
+					$options[:given_names] = dataset_file
+				else
+					raise "Cannot read file: #{dataset_file}"
+					exit
+				end
+				dataset_file = "#{$ROOT_DIR}names/publicprofiler/#{arg}-surnames.txt"
+				if File.readable?(dataset_file)
+					$options[:given_names] = dataset_file
+				else
+					raise "Cannot read file: #{dataset_file}"
+					exit
+				end
+			end
+		when '-s', '--substitute'
+			if arg == "on"
+				$options[:substitute] = true 
+			elsif arg == "off"
+				$options[:substitute] = false
+			else
+				raise("invalid argument for --substitute")
+			end
+		when '-v', '--verbose'
+			$options[:verbose] = true 
+		when '-r', '--recognise'
+			$options[:format_to_recognise] = arg
+			$options[:no_input_names] = true
+			puts "Recognising #{arg}. This can take a while."
+			format = recognise_username_format($options[:format_to_recognise])
+			if format
+				puts "Username format #{$options[:format_to_recognise]} recognised. Plugin name: #{format}"
+			else
+				puts "Username format #{$options[:format_to_recognise]} unrecognised."
+			end
+			exit
 
-				else
-					dataset_file="#{$ROOT_DIR}names/publicprofiler/#{arg}-forenames.txt"				
-					if File.readable?(dataset_file)
-						$options[:given_names]=dataset_file
-					else
-						raise "Cannot read file: #{dataset_file}"
-						exit
-					end
-					dataset_file="#{$ROOT_DIR}names/publicprofiler/#{arg}-surnames.txt"
-					if File.readable?(dataset_file)
-						$options[:given_names]=dataset_file
-					else
-						raise "Cannot read file: #{dataset_file}"
-						exit
-					end
-				end
-			when '-s','--substitute'
-				if arg=="on"
-					$options[:substitute]=true 
-				elsif arg=="off"
-					$options[:substitute]=false
-				else
-					raise("invalid argument for --substitute")
-				end
-			when '-v','--verbose'
-				$options[:verbose]=true 
-			when '-r', '--recognise'
-				$options[:format_to_recognise]=arg
-				$options[:no_input_names]=true
-				puts "Recognising #{arg}. This can take a while."
-				format=recognise_username_format($options[:format_to_recognise])
-				if format
-					puts "Username format #{$options[:format_to_recognise]} recognised. Plugin name: #{format}"
-				else
-					puts "Username format #{$options[:format_to_recognise]} unrecognised."
-				end
-				exit
-
-			when '-h','--help'
-				usage
-				exit
+		when '-h', '--help'
+			usage
+			exit
 		end
 	end
 rescue GetoptLong::Error => err
@@ -527,16 +526,16 @@ rescue GetoptLong::Error => err
 	exit
 end
 
-people =[] # init the array of people
+people = [] # init the array of people
 
 # get people from the cmdline arguments
 case ARGV.size
-	when 1
-		people << {:firstname=>ARGV[0]}
-	when 2
-		people << {:firstname=>ARGV[0],:lastname=>ARGV[1]}
-	when 3
-		people << {:firstname=>ARGV[0],:middlename=>ARGV[1],:lastname=>ARGV[2]}
+when 1
+	people << {:firstname=>ARGV[0]}
+when 2
+	people << {:firstname=>ARGV[0], :lastname=>ARGV[1]}
+when 3
+	people << {:firstname=>ARGV[0], :middlename=>ARGV[1], :lastname=>ARGV[2]}
 end
 
 # get people from the input file
@@ -545,7 +544,7 @@ if $options[:input_file]
 elsif $options[:no_input_names]	
 	# empty as bro
 	people  << {}
-elsif $options[:no_input_names]==false and people.empty?
+elsif $options[:no_input_names] == false and people.empty?
 	usage
 	exit
 end
@@ -554,36 +553,36 @@ end
 
 
 if $options[:selected_plugins].nil?
-	$options[:selected_plugins]=Plugin.registered_plugins
+	$options[:selected_plugins] = Plugin.registered_plugins
 else
-	$options[:selected_plugins]= Plugin.registered_plugins.map {|x| x if $options[:selected_plugins].include?(x.plugin_name) }.compact
+	$options[:selected_plugins] = Plugin.registered_plugins.map {|x| x if $options[:selected_plugins].include?(x.plugin_name) }.compact
 end
 
 
 # if auto, set up people
 if $options[:no_input_names] and not $options[:format_to_recognise]
-	File.open($options[:family_names]).readlines.map {|this_familyname|
+	File.open($options[:family_names]).readlines.map do |this_familyname|
 		this_familyname.downcase.strip!
-		File.open($options[:given_names]).readlines.map {|x| x.downcase.strip! }.map {|this_givenname|
-			people << {:firstname=>this_givenname, :lastname=>this_familyname}
-	}}
+		File.open($options[:given_names]).readlines.map { |x| x.downcase.strip! }.map { |this_givenname| people << {:firstname => this_givenname, :lastname => this_familyname}
+	}
+	end
 end
 
-people=people-[{}] unless $options[:no_input_names] # remove the empty hash element in people.
+people = people - [{}] unless $options[:no_input_names] # remove the empty hash element in people.
 
 people.each do |person|
-	thisname=Name.new
+	thisname = Name.new
 	thisname.init(person)
 
-	generated_names=[] # used to stop repetition
+	generated_names = [] # used to stop repetition
 	$options[:selected_plugins].each do |name_generator|
 		ret= name_generator.generate(thisname)
 
 		if $options[:verbose]
 			# comment note
-			comment_note="# Plugin: #{name_generator.plugin_name}"
+			comment_note = "# Plugin: #{name_generator.plugin_name}"
 			if ret.is_a?(Array)
-				comment_note+=" substituted #{ret.size}"
+				comment_note += " substituted #{ret.size}"
 			end
 			puts comment_note
 		end
@@ -593,12 +592,12 @@ people.each do |person|
 			puts ret
 		elsif ret.is_a?(Array)
 #			pp ret
-			ret[0..$options[:max_substitutions]].each {|r|
+			ret[0..$options[:max_substitutions]].each do |r|
 				unless generated_names.include?(r)
 					generated_names << r
 					puts r
 				end
-			}
+			end
 
 		elsif ret.nil?
 			# we're just skipping over this one. maybe substitute is off.

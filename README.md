@@ -3,7 +3,8 @@ Username Anarchy
 
 * Version: 0.2 (November 2012)
 * Author: urbanadventurer (Andrew Horton)
-* Homepage: https://github.com/urbanadventurer/username-anarchy
+* Homepage: http://www.morningstarsecurity.com/research/username-anarchy
+* Download: https://github.com/urbanadventurer/username-anarchy/archive/master.zip
 
 Description
 ------------

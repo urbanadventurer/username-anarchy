@@ -3,7 +3,7 @@
 
 class Plugin
 	attr_accessor :plugin_name
-	@registered_plugins=[]
+	@registered_plugins = []
 
 	class << self
 		attr_reader :registered_plugins
@@ -13,7 +13,7 @@ class Plugin
 	def self.define(name, &block)
 		p = new
 		p.instance_eval(&block)
-		p.plugin_name= name
+		p.plugin_name = name
 		Plugin.registered_plugins << p
 	end
 
