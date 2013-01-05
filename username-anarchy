@@ -37,7 +37,7 @@
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
     $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
-$ROOT_DIR=File.expand_path(File.dirname(__FILE__)) + "/"
+$ROOT_DIR = File.expand_path(File.dirname(__FILE__)) + "/"
 
 $VERSION = "0.3-dev"
 
@@ -50,7 +50,7 @@ class Name
 
 	def init(s)
 		# if any names are empty strings, convert them to nil
-		s.each_pair {|key,value| s[key] = nil if value == ""  }
+		s.each_pair { |key,value| s[key] = nil if value == "" }
 
 		if s[:firstname]
 			@firstname = s[:firstname]
@@ -123,74 +123,74 @@ class Name
 		# convert from Anna Key format to username format
 		if type == "abk"
 			# this is an array of hashes, not a hash.  Using an array gives us an order of operations. Anna must be substituted before a
-			subs = [{"Anna" =>"%F"},
-				{"Boom"=>"%M"}, 
-				{"Key"=>"%L"},
+			subs = [{"Anna" => "%F"},
+              {"Boom" => "%M"}, 
+              {"Key" => "%L"},
 
-				{"anna"=>"%f"},
-				{"boom"=>"%m"},
-				{"key"=>"%l"},
+              {"anna" => "%f"},
+              {"boom" => "%m"},
+              {"key" => "%l"},
 
-				{"A"=>"%i.F"},
-				{"B"=>"%i.M"},
-				{"K"=>"%i.L"},
+              {"A" => "%i.F"},
+              {"B" => "%i.M"},
+              {"K" => "%i.L"},
 
-				{"a"=>"%i.f"},
-				{"b"=>"%i.m"},
-				{"k"=>"%i.l"},
-				]
-			subs.each {|x| x.each {|from,to| 
+              {"a" => "%i.f"},
+              {"b" => "%i.m"},
+              {"k" => "%i.l"},
+              ]
+			subs.each { |x| x.each { |from,to| 
 					#pp "from"+from, "to"+to; pp "expanded"+expanded; 
 					expanded.gsub!(from,to); }}
 		end
 
-		subs={	"%F"=>@firstname ? Upcase(@firstname) : "%Givenname",
-			"%M"=>@middlename ? Upcase(@middlename) : "%Givenname",
-			"%L"=>@lastname ? Upcase(@lastname): "%Surname",
+	  subs = {"%F" => @firstname ? upcase_it(@firstname) : "%Givenname",
+		        "%M" => @middlename ? upcase_it(@middlename) : "%Givenname",
+		        "%L" => @lastname ? upcase_it(@lastname): "%Surname",
 
-			"%f"=>@firstname ? @firstname.downcase : "%givenname",
-			"%m"=>@middlename ? @middlename.downcase : "%givenname",
-			"%l"=>@lastname ? @lastname.downcase : "%surname",
+		        "%f" => @firstname ? @firstname.downcase : "%givenname",
+		        "%m" => @middlename ? @middlename.downcase : "%givenname",
+		        "%l" => @lastname ? @lastname.downcase : "%surname",
 
-			"%i.F"=>@firstinitial ? Upcase(@firstinitial) : "%A-Z",
-			"%i.M"=>@middleinitial ? Upcase(@middleinitial) : "%A-Z",
-			"%i.L"=>@lastinitial ? Upcase(@lastinitial) : "%A-Z",
+		        "%i.F" => @firstinitial ? upcase_it(@firstinitial) : "%A-Z",
+		        "%i.M" => @middleinitial ? upcase_it(@middleinitial) : "%A-Z",
+		        "%i.L" => @lastinitial ? upcase_it(@lastinitial) : "%A-Z",
 
-			"%i.f"=>@firstinitial ? @firstinitial.downcase : "%a-z",
-			"%i.m"=>@middleinitial ? @middleinitial.downcase : "%a-z",
-			"%i.l"=>@lastinitial ? @lastinitial.downcase : "%a-z",
-		}
+		        "%i.f" => @firstinitial ? @firstinitial.downcase : "%a-z",
+		        "%i.m" => @middleinitial ? @middleinitial.downcase : "%a-z",
+		        "%i.l" => @lastinitial ? @lastinitial.downcase : "%a-z",
+		      }
 		#subs.each {|from,to| expanded.gsub!(from,to); }
 		subs.each { |from,to| expanded.gsub!(from,to); }
 
-		expanded=[expanded] if expanded.class == String 
+		expanded = [expanded] if expanded.class == String 
 
 		# substitution
 		if $options[:substitute]
 			while expanded.map { |x| x =~ /%a-z|%A-Z|%[gG]ivenname|%[sS]urname|%DD|%D/ }.compact.size > 0
-				expanded=expanded.map do |e|
+				expanded = expanded.map do |e|
 					# middle initials
 					if e =~ /%a-z/
-						e = ('a'..'z').map {|letter| e.sub('%a-z',letter) }
+						e = ('a'..'z').map { |letter| e.sub('%a-z',letter) }
 					end
 					if e =~ /%A-Z/
-						e = ('A'..'Z').map {|letter| e.sub('%A-Z',letter) }
+						e = ('A'..'Z').map { |letter| e.sub('%A-Z',letter) }
 					end
 
 					# given names
 					if e =~ /%givenname/
-						e=self.given_name_list.map {|name| e.sub('%givenname',name.downcase) }
+						e = self.given_name_list.map { |name| e.sub('%givenname',name.downcase) }
 					end
 					if e =~ /%Givenname/
-						e=self.given_name_list.map {|name| e.sub('%Givenname',name) }
+						e = self.given_name_list.map { |name| e.sub('%Givenname',name) }
 					end
 
 					# given names
 					if e =~ /%surname/
-						e=self.family_name_list.map {|name| e.sub('%surname',name.downcase) }
+						e = self.family_name_list.map { |name| e.sub('%surname',name.downcase) }
 					end
 					if e =~ /%Surname/
-						e=self.family_name_list.map {|name| e.sub('%Surname',name) }
+						e = self.family_name_list.map { |name| e.sub('%Surname',name) }
 					end
 
 					# %DD - Digits, range of 00..99
@@ -198,10 +198,10 @@ class Name
 
 					# numbers - leading 0's?
 					if e =~ /%DD/
-						e=(00..99).map {|num| e.sub('%DD',sprintf("%0.2d",num)) }
+						e = (00..99).map { |num| e.sub('%DD',sprintf("%0.2d",num)) }
 					end
 					if e =~ /%D/
-						e=(0..9).map {|num| e.sub('%D',num.to_s) }
+						e = (0..9).map { |num| e.sub('%D',num.to_s) }
 					end
 					e
 				end
@@ -216,10 +216,10 @@ class Name
 	if expanded
 		# post process - remove spaces and apostrophes
 		if $options[:strip_spaces] = true
-			expanded=expanded.map {|x| x.delete(" ")}
+			expanded = expanded.map { |x| x.delete(" ") }
 		end
 		if $options[:strip_apostrophes] = true
-			expanded=expanded.map {|x| x.delete("'")}
+			expanded = expanded.map { |x| x.delete("'") }
 		end
 	end
 	expanded
@@ -227,7 +227,7 @@ class Name
 end
 
 
-def Upcase(s)
+def upcase_it(s)
 	# what if it's nil?
 #	pp s
 	if s and not s == ""
@@ -242,11 +242,10 @@ def list_plugins
 	puts "Plugin name".ljust(20) + "\tExample"
 	puts "-" * 80
 
-	person=Name.new
+	person = Name.new
 	person.init({:firstname => "anna", :middlename => "boom", :lastname => "key"})
 
 	Plugin.registered_plugins.each do |name_generator|
-
 		example = name_generator.generate(person)
 
 		unless example.nil?
@@ -265,24 +264,24 @@ def load_names_list(filename)
 	raise "#{filename}: No such file" unless File.exists?(filename)
 	raise "#{filename}: Cannot read file" unless File.readable?(filename)
 
-	lines=File.readlines(filename)
+	lines = File.readlines(filename)
 
 	# is it valid? first line must contain 'Firstname,Middlename,Lastname'
 	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname|firstname|middlename|lastname|firstinitial|lastinitial|middleinitial|Firstinitial|Lastinitial|Middleinitial/
 
 	# is it comma or TAB delimited?
-	delimiter="," # by default it's comma
-	delimiter="\t" if lines.first.include?("\t")
+	delimiter = "," # by default it's comma
+	delimiter = "\t" if lines.first.include?("\t")
 
 	# learn columns
 #attr_accessor :firstname, :lastname, :firstinitial, :lastinitial, :middlename, :middleinitial	
 
-	column_names = {"firstname" => :firstname,
-			"lastname" => :lastname,
-			"firstinitial" => :firstinitial,
-			"lastinitial" => :lastinitial,
-			"middlename" => :middlename,
-			"middleinitial" => :middleinitial}
+	column_names = { "firstname" => :firstname,
+			              "lastname" => :lastname,
+			              "firstinitial" => :firstinitial,
+			              "lastinitial" => :lastinitial,
+			              "middlename" => :middlename,
+			              "middleinitial" => :middleinitial }
 	columns = []
 	
 	lines.first.split(delimiter).each_with_index do |header, i|
@@ -317,10 +316,13 @@ def recognise_username_format(username)
 #	pp plugins_to_search
 	# only search names that contain letters in our search string as the first letter of the first name or surname
 	letters = $options[:format_to_recognise].split('').sort.uniq
+	
 	File.open($options[:family_names]).readlines.map do |this_familyname|
 		this_familyname.strip!
 		next unless letters.include?(this_familyname[0..0])
+		
 		puts "# Searching #{this_familyname}" if $options[:verbose]
+		
 		File.open($options[:given_names]).readlines.map {|x| x.strip! }.map do |this_givenname|
 			next unless letters.include?(this_givenname[0..0])
 			thisname = Name.new
@@ -334,16 +336,16 @@ def recognise_username_format(username)
 					end
 				end
 			end
-	end
+    end
 	end
 end
 
 def error(s, severity = nil)
 	usage
-	sev=	case severity
-		when nil
-			sev = "Fatal"
-		end
+	sev = case severity
+		    when nil
+			    sev = "Fatal"
+		    end
 	puts "#{sev} Error. #{s}"
 	puts
 	exit
@@ -442,7 +444,7 @@ begin
 				end
 			end"
 			eval(code)
-		when '-m','--max-substitutions'
+		when '-m', '--max-substitutions'
 			if arg.to_i > 0
 				$options[:max_substitutions] = arg.to_i-1
 			else
@@ -531,11 +533,11 @@ people = [] # init the array of people
 # get people from the cmdline arguments
 case ARGV.size
 when 1
-	people << {:firstname=>ARGV[0]}
+	people << {:firstname => ARGV[0]}
 when 2
-	people << {:firstname=>ARGV[0], :lastname=>ARGV[1]}
+	people << {:firstname => ARGV[0], :lastname=>ARGV[1]}
 when 3
-	people << {:firstname=>ARGV[0], :middlename=>ARGV[1], :lastname=>ARGV[2]}
+	people << {:firstname => ARGV[0], :middlename=>ARGV[1], :lastname=>ARGV[2]}
 end
 
 # get people from the input file
@@ -549,13 +551,10 @@ elsif $options[:no_input_names] == false and people.empty?
 	exit
 end
 
-
-
-
 if $options[:selected_plugins].nil?
 	$options[:selected_plugins] = Plugin.registered_plugins
 else
-	$options[:selected_plugins] = Plugin.registered_plugins.map {|x| x if $options[:selected_plugins].include?(x.plugin_name) }.compact
+	$options[:selected_plugins] = Plugin.registered_plugins.map { |x| x if $options    [:selected_plugins].include?(x.plugin_name) }.compact
 end
 
 
@@ -576,7 +575,7 @@ people.each do |person|
 
 	generated_names = [] # used to stop repetition
 	$options[:selected_plugins].each do |name_generator|
-		ret= name_generator.generate(thisname)
+		ret = name_generator.generate(thisname)
 
 		if $options[:verbose]
 			# comment note
