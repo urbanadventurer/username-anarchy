@@ -38,9 +38,9 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
     $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
 $ROOT_DIR = File.expand_path(File.dirname(__FILE__)) + "/"
-
 $VERSION = "0.3-dev"
 
+require 'optparse'
 require 'getoptlong'
 require 'pp'
 require 'format-plugins.rb'
@@ -340,8 +340,7 @@ def recognise_username_format(username)
 	end
 end
 
-def error(s, severity = nil)
-	usage
+def error(s, severity = nil)	
 	sev = case severity
 		    when nil
 			    sev = "Fatal"
@@ -351,58 +350,193 @@ def error(s, severity = nil)
 	exit
 end
 
-def usage
-	puts "Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]"
-	puts "Version: #{$VERSION}"
-	print "
-NAMES
---input-file, -i=FILE\t\tInput list of names. Can be CSV or TAB delimited.
-\t\t\t\tValid column headings are: firstinitial,firstname,
-\t\t\t\tlastinitial,lastname,middleinitial,middlename
---auto, -a\t\t\tAutomatically generate names from a country or other lists.
---country COUNTRY, -c\t\tCOUNTRY can be one of the following datasets:
-\t\t\t\tPublicProfiler:
-\t\t\t\targentina, austria, belgium, canada, china, denmark, france, germany,
-\t\t\t\thungary, india, ireland, italy, luxembourg, netherlands, newzealand,
-\t\t\t\tnorway, poland, serbia, slovenia, spain, sweden, switzerland, uk, us
-\t\t\t\tOther:
-\t\t\t\tFacebook - uses the Facebook top 10,000 first and last names
---given-names=FILE\t\tDictionary of given names
---family-names=FILE\t\tDictionary of family names
---substitute, -s=STATE\t\tControl name substitutions.
-\t\t\t\tValid values are 'on' and 'off'. Default: off
-\t\t\t\tCan substitute any part of a name not available.
---max-substitutions, -m=NUM\tLimit quantity of substitutions per plugin.
-\t\t\t\tDefault: -1 (Unlimited)
-
-USERNAME FORMAT
---list-formats, -l\t\tList format plugins
---select-format, -f=LIST\tSelect format plugins by name. Comma delimited list
---recognise, -r=USERNAME\tRecognise which format is in use for a username. This
-\t\t\t\tuses the Facebook dataset. Use verbose mode to show progress.
---format, -F\t\t\tDefine the user format using either format string or ABK format.
-
-MISC
---verbose, -v\t\t\tDisplay plugin format comments in output and displays last name searches
-\t\t\t\tin plugin format recogniser
---help, -h\t\t\tThis help
-"
-
-	puts
-end
-
 $options = Hash.new
-$options[:substitute] = false
-$options[:max_substitutions] = -1 # the max is -1 because -1 is also the end element of an array
-$options[:input_file] = nil
-$options[:selected_plugins] = nil
-$options[:substitute_country] = nil
+
+$options[:substitute_country] = nil 
 $options[:given_names] = "#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #used for recogniser
 $options[:family_names] = "#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
-$options[:no_input_names] = false
 $options[:strip_spaces] = true
 $options[:strip_apostrophes] = true
 
+# optparse
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]\nVersion: #{$VERSION}"
+  opts.summary_width = 25
+  opts.summary_indent = " " 
+  opts.separator ""
+  opts.separator "Names:"
+  
+  $options[:input_file] = nil
+  opts.on('-i', '--input-file FILE', "Input list of names. Can be CSV or TAB delimited",
+          "  Valid column headings are: firstinitial, firstname,",
+          "  lastinitial, lastname, middleinitial, middlename") do |f|
+    $options[:input_file] = f
+  end
+
+  $options[:no_input_names] = false  
+  opts.on('-a', '--auto', "Automatically generate names from a country/list") do
+    $options[:no_input_names] = true
+  end
+  
+  opts.on('--country COUNTRY', '-c' , "COUNTRY can be one of the following datasets:",
+    "  PublicProfiler:",
+    "  argentina, austria, belgium, canada, china,",
+    "  denmark, france, germany, hungary, india, ireland,",
+    "  italy, luxembourg, netherlands, newzealand, norway,",
+    "  poland, serbia, slovenia, spain, sweden,",
+    "  switzerland, uk, us",
+    "  Other:",
+    "  Facebook - uses the Facebook top 10,000 names") do |dataset|
+    dataset.downcase!
+	  if dataset == "facebook"
+  		dataset_file="#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt"
+		  if File.readable?(dataset_file)
+			  $options[:given_names] = dataset_file
+		  else
+			  raise "Cannot read file: #{dataset_file}"
+			  exit
+		  end
+		
+		  dataset_file = "#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt"
+		  if File.readable?(dataset_file)
+			  $options[:given_names] = dataset_file
+		  else
+			  raise "Cannot read file: #{dataset_file}"
+			  exit
+		  end
+		  
+		else
+		
+			dataset_file = "#{$ROOT_DIR}names/publicprofiler/#{dataset}-forenames.txt"				
+		  if File.readable?(dataset_file)
+			  $options[:given_names] = dataset_file
+		  else
+			  raise "Cannot read file: #{dataset_file}"
+			  exit
+		  end
+		  
+		  dataset_file = "#{$ROOT_DIR}names/publicprofiler/#{dataset}-surnames.txt"
+		  if File.readable?(dataset_file)
+			  $options[:given_names] = dataset_file
+		  else
+			  raise "Cannot read file: #{dataset_file}"
+			  exit
+		  end
+		end	
+  end
+  
+  opts.on('--given-names FILE',"Dictionary of given names") do |arg|
+		if File.readable?($options[:given_names])
+			$options[:given_names] = arg
+		else
+			raise "Cannot read file: #{arg}"
+		end
+	end		
+
+  opts.on('--family-names FILE', "Dictionary of family names") do |arg|
+		if File.readable?($options[:family_names])
+			$options[:family_names] = arg
+		else
+			raise "Cannot read file: #{arg}"
+		end
+	end
+	
+  $options[:substitute] = false
+  opts.on('-s', '--substitute STATE', "Control name substitutions",
+    "  Valid values are 'on' and 'off'. Default: off",
+    "  Can substitute any part of a name not available") do |arg|
+		if arg == "on"
+			$options[:substitute] = true 
+		elsif arg == "off"
+			$options[:substitute] = false
+		else
+			raise("invalid argument for --substitute")
+		end			
+	end
+	
+	# the max is -1 because -1 is also the end element of an array
+  $options[:max_substitutions] = -1 
+	opts.on('-m', '--max-sub NUM', Integer, "Limit quantity of substitutions per plugin.",
+	"  Default: -1 (Unlimited)") do |arg|
+    if arg > 0
+      $options[:max_substitutions] = arg - 1
+		else
+			raise("maximum substitutions must be a positive integer")
+		end
+	end    		
+
+  opts.separator ""
+  opts.separator "Username format:"
+  
+	opts.on('-l', '--list-formats', "List format plugins") do
+		$options[:substitute] = true
+		list_plugins
+		exit	
+	end
+
+  $options[:selected_plugins] = nil
+	opts.on('-f', '--select-format LIST', Array, "Select format plugins by name. Comma delimited list") do |plugins|
+    $options[:selected_plugins] = plugins
+    $options[:selected_plugins].each { |x|
+    error("Format plugin not found: #{x}.") unless Plugin.registered_plugins.map { |p| p.plugin_name }.include?(x) }
+  end	
+	
+  opts.on('-r', '--recognise USERNAME', "Recognise which format is in use for a username.",
+      "  This uses the Facebook dataset. Use verbose mode to","  show progress.") do |arg|
+		$options[:format_to_recognise] = arg
+		$options[:no_input_names] = true
+		puts "Recognising #{arg}. This can take a while."
+		format = recognise_username_format($options[:format_to_recognise])
+		if format
+			puts "Username format #{$options[:format_to_recognise]} recognised. Plugin name: #{format}"
+		else
+			puts "Username format #{$options[:format_to_recognise]} unrecognised."
+		end
+		exit
+  end
+
+  # set to nil above
+  opts.on('-F', '--format FORMAT', "Define the user format using either format string or","  ABK format. See README.md for format details.") do |arg|
+		$options[:selected_plugins] = "custom"
+		fmt = arg.delete('"')
+		code = "
+		Plugin.define \"custom\" do
+			def generate(n)
+				n.format_anna(\"#{fmt}\")
+			end
+		end"
+		eval(code)
+  end
+	
+  opts.separator ""
+  opts.separator "Miscellaneous:"
+		
+  opts.on('-v', '--verbose', "Display plugin format comments in output and displays","  last name searches in plugin format recogniser") do
+	  $options[:verbose] = true   
+  end  
+
+	opts.on_tail('-h', '--help') do
+	  puts opts
+	  exit
+	end 
+	opts.on_tail
+end
+
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument  #
+  puts optparse                                                    #
+  puts
+  puts $!.to_s                                                     # Friendly output when parsing fails
+  exit                                                             
+end
+
+#p $options
+#p ARGV
+
+# GetoptLong
+# --------------------------------------
+=begin
 opts = GetoptLong.new(
       [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
       [ '--auto', '-a', GetoptLong::NO_ARGUMENT ],
@@ -528,6 +662,8 @@ rescue GetoptLong::Error => err
 	exit
 end
 
+=end
+
 people = [] # init the array of people
 
 # get people from the cmdline arguments
@@ -547,7 +683,8 @@ elsif $options[:no_input_names]
 	# empty as bro
 	people  << {}
 elsif $options[:no_input_names] == false and people.empty?
-	usage
+	
+	puts optparse # print usage
 	exit
 end
 
