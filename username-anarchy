@@ -4,6 +4,11 @@
 # 
 # Anna Boom Key
 #
+# make it show the options/ first + last name lists it's using.
+# make it suppress duplicates
+#
+# bug fixes
+# it isn't using the FIRST and LAST names for country 
 #
 # TODO
 #
@@ -38,11 +43,12 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
     $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
 $ROOT_DIR = File.expand_path(File.dirname(__FILE__)) + "/"
-$VERSION = "0.3-dev"
+$VERSION = "0.4"
 
 require 'optparse'
 require 'getoptlong'
 require 'pp'
+require 'set'
 require 'format-plugins.rb'
 
 class Name
@@ -307,7 +313,8 @@ def load_names_list(filename)
 		end
 		person unless person.empty? # any lines not interpreted become nil
 	end
-
+#pp people
+#exit
 	people.compact # compact removes the nil's
 end
 
@@ -399,15 +406,14 @@ optparse = OptionParser.new do |opts|
 		
 		  dataset_file = "#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt"
 		  if File.readable?(dataset_file)
-			  $options[:given_names] = dataset_file
+			  $options[:family_names] = dataset_file
 		  else
 			  raise "Cannot read file: #{dataset_file}"
 			  exit
 		  end
 		  
-		else
-		
-			dataset_file = "#{$ROOT_DIR}names/publicprofiler/#{dataset}-forenames.txt"				
+	  else
+		dataset_file = "#{$ROOT_DIR}/names/publicprofiler/#{dataset}-forenames.txt"				
 		  if File.readable?(dataset_file)
 			  $options[:given_names] = dataset_file
 		  else
@@ -415,14 +421,14 @@ optparse = OptionParser.new do |opts|
 			  exit
 		  end
 		  
-		  dataset_file = "#{$ROOT_DIR}names/publicprofiler/#{dataset}-surnames.txt"
+		dataset_file = "#{$ROOT_DIR}/names/publicprofiler/#{dataset}-surnames.txt"
 		  if File.readable?(dataset_file)
-			  $options[:given_names] = dataset_file
+			  $options[:family_names] = dataset_file
 		  else
 			  raise "Cannot read file: #{dataset_file}"
 			  exit
 		  end
-		end	
+	  end
   end
   
   opts.on('--given-names FILE',"Dictionary of given names") do |arg|
@@ -532,7 +538,6 @@ rescue OptionParser::InvalidOption, OptionParser::MissingArgument  #
 end
 
 
-
 people = [] # init the array of people
 
 # get people from the cmdline arguments
@@ -567,7 +572,7 @@ end
 # if auto, set up people
 if $options[:no_input_names] and not $options[:format_to_recognise]
 	File.open($options[:family_names]).readlines.map do |this_familyname|
-		this_familyname.downcase.strip!
+		this_familyname = this_familyname.downcase.strip!
 		File.open($options[:given_names]).readlines.map { |x| x.downcase.strip! }.map { |this_givenname| people << {:firstname => this_givenname, :lastname => this_familyname}
 	}
 	end
@@ -575,11 +580,11 @@ end
 
 people = people - [{}] unless $options[:no_input_names] # remove the empty hash element in people.
 
+generated_names = Set.new # used to stop repetition. never repeat. Mary Pell and Mary Polonski only make maryp once
 people.each do |person|
 	thisname = Name.new
 	thisname.init(person)
 
-	generated_names = [] # used to stop repetition
 	$options[:selected_plugins].each do |name_generator|
 		ret = name_generator.generate(thisname)
 
@@ -593,8 +598,10 @@ people.each do |person|
 		end
 		
 		if ret.is_a?(String)
-			generated_names << ret unless generated_names.include?(ret)
-			puts ret
+			unless generated_names.include?(ret)
+				generated_names << ret 
+				puts ret
+			end
 		elsif ret.is_a?(Array)
 #			pp ret
 			ret[0..$options[:max_substitutions]].each do |r|
