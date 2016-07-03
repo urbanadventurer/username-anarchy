@@ -4,39 +4,7 @@
 # 
 # Anna Boom Key
 #
-# make it show the options/ first + last name lists it's using.
-# make it suppress duplicates
-#
-# bug fixes
-# it isn't using the FIRST and LAST names for country 
-#
-# TODO
-#
-# put plugins in order, give popularity scores
-# convert accented letters to standard as a 2nd option
-# choose plugin by name or number
-# 
-# INPUT : take a csv with adjustable columns, eg.
-# default: firstname, lastname
-# allow: firstname, firstinitial, lastname, lastinitial, middlename, middleinitial, gender, country, age, age-range
-# allow some of these columns to be set globally on the cmdline
-#
-# include blank substitutions. eg. "" ?
-#
-# ideas:
-# order plugins by likeliness
-# sets of plugins, common and all.
-#
-# how to deal with Robert de Niro?
-# drop the 'de'? remove space : deNiro?
-#
-# convert accented characters to normal, e.g. á => a, é => e, í => i, ó => o , ú => u
-# Á,á,Ấ,ấ,Ắ,ắ,Ǻ,ǻ,Ǽ,ǽ => a, etc.
-#
-# https://secure.wikimedia.org/wikipedia/en/wiki/List_of_most_common_surnames_in_Oceania
-#
-# google: login username case sensitive surname
-#
+
 
 ## set up load paths. add the directory of the file currently being executed to the load path
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
