@@ -87,7 +87,6 @@ class Name
 		# %i.M - Middle initial
 		# %i.L - Last initial
 
-
 		# natural format
 		# Anna Key
 		# write whatever parts of the name you want. for Joe Bloggs to become jbloggs, write "akey". for JB, write "AK"
@@ -95,6 +94,7 @@ class Name
 
 		expanded = s.clone
 		# convert from Anna Key format to username format
+
 		if type == "abk"
 			# this is an array of hashes, not a hash.  Using an array gives us an order of operations. Anna must be substituted before a
 			subs = [{"Anna" => "%F"},
@@ -134,7 +134,7 @@ class Name
 		        "%i.m" => @middleinitial ? @middleinitial.downcase : "%a-z",
 		        "%i.l" => @lastinitial ? @lastinitial.downcase : "%a-z",
 		      }
-		#subs.each {|from,to| expanded.gsub!(from,to); }
+		
 		subs.each { |from,to| expanded.gsub!(from,to); }
 
 		expanded = [expanded] if expanded.class == String 

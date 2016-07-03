@@ -180,10 +180,10 @@ Plugin.define "Last" do
 		n.format_anna("Key")
 	end
 end
+=begin
 
 Plugin.define "FML" do
 	def generate(n)
-=begin
 		# this is the sort of code I want to avoid
 		s=""
 		s+=n.firstinitial.downcase
@@ -200,8 +200,8 @@ Plugin.define "FML" do
 			s=names
 		end
 		s
-=end
 		n.format_anna("ABK")
 	end
 end
+=end
 
