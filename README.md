@@ -37,6 +37,7 @@ Extras
 Usage
 -----
 Username Anarchy is a command line tool.
+```
 	 ___ ____                                                        
 	|   |    \ ______  ____ _______   ____  _____     __ __    ____  
 	|   :    //  ___/_/    \\_  __ \ /    \ \__  \   /  :  \ _/    \
@@ -94,6 +95,7 @@ Username Anarchy is a command line tool.
 	                           last name searches in plugin format recogniser
 	 -h, --help
 
+```
 
 Example Usage
 -------------
