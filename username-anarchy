@@ -11,7 +11,7 @@ $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
     $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
 
 $ROOT_DIR = File.expand_path(File.dirname(__FILE__)) + "/"
-$VERSION = "0.4"
+$VERSION = "0.5"
 
 require 'optparse'
 require 'getoptlong'
@@ -241,11 +241,21 @@ def load_names_list(filename)
 	lines = File.readlines(filename)
 
 	# is it valid? first line must contain 'Firstname,Middlename,Lastname'
-	raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname|firstname|middlename|lastname|firstinitial|lastinitial|middleinitial|Firstinitial|Lastinitial|Middleinitial/
+	#raise "#{filename}: Doesn't contain a table header" unless lines.first =~ /Firstname|Middlename|Lastname|firstname|middlename|lastname|firstinitial|lastinitial|middleinitial|Firstinitial|Lastinitial|Middleinitial/
+	unless lines.first =~ /Firstname|Middlename|Lastname|firstname|middlename|lastname|firstinitial|lastinitial|middleinitial|Firstinitial|Lastinitial|Middleinitial/
+		lines.unshift "firstname lastname"
+	end
 
-	# is it comma or TAB delimited?
-	delimiter = "," # by default it's comma
-	delimiter = "\t" if lines.first.include?("\t")
+	# is it SPACE, comma or TAB delimited?
+	if lines.first.include?("\t")
+		delimiter = "\t"
+	elsif lines.first.include?(",")
+		delimiter = ","
+	elsif lines.first.include?(" ")
+		delimiter = " "
+	else
+		raise "Cannot auto-detect delimiter."
+	end
 
 	# learn columns
 #attr_accessor :firstname, :lastname, :firstinitial, :lastinitial, :middlename, :middleinitial	
@@ -325,6 +335,50 @@ def error(s, severity = nil)
 	exit
 end
 
+
+def colorize(text, color_code)   
+"#{color_code}#{text}\e[0m"
+end
+
+def red(text);          colorize(text, "\e[1m\e[31m"); end
+def dark_red(text);     colorize(text, "\e[31m"); end
+def green(text);        colorize(text, "\e[1m\e[32m"); end     
+def dark_green(text);   colorize(text, "\e[32m"); end     
+def yellow(text);       colorize(text, "\e[1m\e[33m"); end    
+def dark_yellow(text);  colorize(text, "\e[33m"); end    
+def blue(text);         colorize(text, "\e[1m\e[34m"); end     
+def dark_blue(text);    colorize(text, "\e[34m"); end     
+def magenta(text);      colorize(text, "\e[1m\e[35m"); end
+def dark_magenta(text); colorize(text, "\e[35m"); end
+def cyan(text);         colorize(text, "\e[1m\e[36m"); end
+def dark_cyan(text);    colorize(text, "\e[36m"); end
+def white(text);        colorize(text, "\e[1m\e[37m"); end
+def grey(text);         colorize(text, "\e[37m"); end
+
+
+
+def banner
+
+banner='
+ ___ ____                                                        
+|   |    \ ______  ____ _______   ____  _____     __ __    ____  
+|   :    //  ___/_/    \\\\_  __ \\ /    \\ \\__  \\   /  :  \\ _/    \\
+\'   .   / \\___ \\ \\   o_/ |  | \\/|   :  \\ /  o \\ |  . .  \\\\   o_/ 
+ \\_____/ /______) \\_____)|__|   |___:  /(______)|__: :  / \\_____)
+       _____                         \\/       .__     \\/      
+      /     \\    ____  _____  _______   ____  |  |__  ___.__.   
+     /   o   \\  /    \\ \\__  \\ \\_  __ \\_/ ___\\ |  |  \\(   :  |   
+    /    .    \\|   .  \\ /  o \\ |  | \\/\\  \\___ |   .  \\\\___  |   
+    \\____:__  /|___:__/(______)|__|    \\_____)|___:__//_____|   
+            \\/                                                  
+'
+
+random_colour = ['red', 'green', 'blue', 'yellow' ][ rand(3) ]
+eval "#{random_colour}(banner)"
+
+end
+
+
 $options = Hash.new
 
 $options[:substitute_country] = nil 
@@ -332,10 +386,13 @@ $options[:given_names] = "#{$ROOT_DIR}/names/facebook/firstnames-top10000.txt" #
 $options[:family_names] = "#{$ROOT_DIR}/names/facebook/lastnames-top10000.txt" #used for recogniser
 $options[:strip_spaces] = true
 $options[:strip_apostrophes] = true
+$options[:case_insensitive] = true
+
 
 # optparse
 optparse = OptionParser.new do |opts|
-  opts.banner = "Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]\
+  opts.banner = banner
+  opts.banner += "Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]\
 \nAuthor: Andrew Horton (urbanadventurer). Version: #{$VERSION}"
   opts.summary_width = 25
   opts.summary_indent = " " 
@@ -343,9 +400,10 @@ optparse = OptionParser.new do |opts|
   opts.separator "Names:"
   
   $options[:input_file] = nil
-  opts.on('-i', '--input-file FILE', "Input list of names. Can be CSV or TAB delimited",
-          "Valid column headings are: firstinitial, firstname,",
-          "lastinitial, lastname, middleinitial, middlename") do |f|
+  opts.on('-i', '--input-file FILE', "Input list of names. Can be SPACE, CSV or TAB delimited.",
+          "Defaults to firstname, lastname. Valid column headings are:",
+          "firstinitial, firstname, lastinitial, lastname,",
+          "middleinitial, middlename.") do |f|
     $options[:input_file] = f
   end
 
@@ -482,6 +540,30 @@ optparse = OptionParser.new do |opts|
 		end"
 		eval(code)
   end
+  opts.separator ""
+  opts.separator "Output:"
+
+  $options[:suffix] = nil
+	opts.on('-@', '--suffix BOOL', String, "Suffix. e.g. @example.com",
+	"Default: None") do |arg|
+		arg.downcase!
+	    if arg
+	      $options[:suffix] = arg
+	    end
+	end
+
+  $options[:case_insensitive] = true
+	opts.on('-C', '--case-insensitive BOOL', String, "Case insensitive usernames.",
+	"Default: True (All lower case)") do |arg|		
+		arg.downcase!
+	    if arg == 'true'
+	      $options[:case_insensitive] = true
+	    elsif arg == 'false'
+	     	$options[:case_insensitive] = false
+		else
+			raise("Invalid option. Must be true or ")
+		end		
+	end
 	
   opts.separator ""
   opts.separator "Miscellaneous:"
@@ -499,7 +581,7 @@ end
 
 begin
   optparse.parse!
-rescue OptionParser::InvalidOption, OptionParser::MissingArgument  #
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument  #  
   puts optparse                                                    #
   puts
   puts $!.to_s                                                     # Friendly output when parsing fails
@@ -567,6 +649,8 @@ people.each do |person|
 		end
 		
 		if ret.is_a?(String)
+			ret.downcase! if $options[:case_insensitive] 
+			ret += $options[:suffix] if $options[:suffix]
 			unless generated_names.include?(ret)
 				generated_names << ret 
 				puts ret
@@ -574,6 +658,8 @@ people.each do |person|
 		elsif ret.is_a?(Array)
 #			pp ret
 			ret[0..$options[:max_substitutions]].each do |r|
+				r.downcase! if $options[:case_insensitive] 
+				r += $options[:suffix] if $options[:suffix]
 				unless generated_names.include?(r)
 					generated_names << r
 					puts r

@@ -47,6 +47,11 @@ Plugin.define "firstlast[8]" do
 	end
 end
 
+Plugin.define "first[4]last[4]" do
+	def generate(n)		
+		(n.firstname.to_s[0..3]) + (n.lastname.to_s[0..3]) unless n.firstname.nil? or n.lastname.nil?
+	end
+end
 
 Plugin.define "firstl" do
 	def generate(n)

@@ -1,7 +1,7 @@
 Username Anarchy
 ======================================
 
-* Version: 0.4 (July 2016)
+* Version: 0.5 (October 2016)
 * Author: urbanadventurer (Andrew Horton)
 * Homepage: http://www.morningstarsecurity.com/research/username-anarchy
 * Source: https://github.com/urbanadventurer/username-anarchy/
@@ -37,41 +37,62 @@ Extras
 Usage
 -----
 Username Anarchy is a command line tool.
-
+	 ___ ____                                                        
+	|   |    \ ______  ____ _______   ____  _____     __ __    ____  
+	|   :    //  ___/_/    \\_  __ \ /    \ \__  \   /  :  \ _/    \
+	'   .   / \___ \ \   o_/ |  | \/|   :  \ /  o \ |  . .  \\   o_/ 
+	 \_____/ /______) \_____)|__|   |___:  /(______)|__: :  / \_____)
+	       _____                         \/       .__     \/      
+	      /     \    ____  _____  _______   ____  |  |__  ___.__.   
+	     /   o   \  /    \ \__  \ \_  __ \_/ ___\ |  |  \(   :  |   
+	    /    .    \|   .  \ /  o \ |  | \/\  \___ |   .  \\___  |   
+	    \____:__  /|___:__/(______)|__|    \_____)|___:__//_____|   
+	            \/                                                  
 	Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]
-	Version: 0.2
+	Author: Andrew Horton (urbanadventurer). Version: 0.5
 
-	NAMES
-	--input-file, -i=FILE           Input list of names. Can be CSV or TAB delimited.
-                                        Valid column headings are: firstinitial,firstname,
-                                        lastinitial,lastname,middleinitial,middlename
-	--auto, -a                      Automatically generate names from a country or other lists.
-	--country COUNTRY, -c           COUNTRY can be one of the following datasets:
-                                        PublicProfiler:
-                                        argentina, austria, belgium, canada, china, denmark, france, germany,
-                                        hungary, india, ireland, italy, luxembourg, netherlands, newzealand,
-                                        norway, poland, serbia, slovenia, spain, sweden, switzerland, uk, us
-                                        Other:
-                                        Facebook - uses the Facebook top 10,000 first and last names
-	--given-names=FILE              Dictionary of given names
-	--family-names=FILE             Dictionary of family names
-	--substitute, -s=STATE          Control name substitutions.
-		                        Valid values are 'on' and 'off'. Default: off
-		                        Can substitute any part of a name not available.
-	--max-substitutions, -m=NUM     Limit quantity of substitutions per plugin.
-		                        Default: -1 (Unlimited)
+	Names:
+	 -i, --input-file FILE     Input list of names. Can be SPACE, CSV or TAB delimited.
+	                           Defaults to firstname, lastname. Valid column headings are:
+	                           firstinitial, firstname, lastinitial, lastname,
+	                           middleinitial, middlename.
+	 -a, --auto                Automatically generate names from a country/list
+	 -c, --country COUNTRY     COUNTRY can be one of the following datasets:
+	                           PublicProfiler:
+	                           argentina, austria, belgium, canada, china,
+	                           denmark, france, germany, hungary, india, ireland,
+	                           italy, luxembourg, netherlands, newzealand, norway,
+	                           poland, serbia, slovenia, spain, sweden,
+	                           switzerland, uk, us
+	                           Other:
+	                           Facebook - uses the Facebook top 10,000 names
+	     --given-names FILE    Dictionary of given names
+	     --family-names FILE   Dictionary of family names
+	 -s, --substitute STATE    Control name substitutions
+	                           Valid values are 'on' and 'off'. Default: off
+	                           Can substitute any part of a name not available
+	 -m, --max-sub NUM         Limit quantity of substitutions per plugin.
+	                           Default: -1 (Unlimited)
 
-	USERNAME FORMAT
-	--list-formats, -l              List format plugins
-	--select-format, -f=LIST        Select format plugins by name. Comma delimited list
-	--recognise, -r=USERNAME        Recognise which format is in use for a username. This
-                                        uses the Facebook dataset. Use verbose mode to show progress.
+	Username format:
+	 -l, --list-formats        List format plugins
+	 -f, --select-format LIST  Select format plugins by name. Comma delimited list
+	 -r, --recognise USERNAME  Recognise which format is in use for a username.
+	                           This uses the Facebook dataset. Use verbose mode to
+	                           show progress.
+	 -F, --format FORMAT       Define the user format using either format string or
+	                           ABK format. See README.md for format details.
 
-	MISC
-	--verbose, -v                   Display plugin format comments in output and displays last name searches
-		                        in plugin format recogniser
-	--help, -h                      This help
+	Output:
+	 -@, --suffix BOOL         Suffix. e.g. @example.com
+	                           Default: None
+	 -C BOOL,                  Case insensitive usernames.
+	     --case-insensitive    Default: True (All lower case)
 
+	Miscellaneous:
+	 -v, --verbose             Display plugin format comments in output and displays
+	                           last name searches in plugin format recogniser
+	 -h, --help
 
 
 Example Usage
