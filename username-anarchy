@@ -235,7 +235,7 @@ end
 
 def load_names_list(filename)
 	# check f is a file and readable
-	raise "#{filename}: No such file" unless File.exists?(filename)
+	raise "#{filename}: No such file" unless File.exist?(filename)
 	raise "#{filename}: Cannot read file" unless File.readable?(filename)
 
 	lines = File.readlines(filename)
