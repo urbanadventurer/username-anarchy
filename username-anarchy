@@ -7,8 +7,9 @@
 
 
 ## set up load paths. add the directory of the file currently being executed to the load path
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__))) unless
-    $:.include?(File.dirname(__FILE__)) || $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
+real_file_path = File.dirname(File.realpath(__FILE__))
+$LOAD_PATH.unshift(File.expand_path(real_file_path)) unless
+    $:.include?(real_file_path) || $LOAD_PATH.include?(File.expand_path(real_file_path))
 
 $ROOT_DIR = File.expand_path(File.dirname(__FILE__)) + "/"
 $VERSION = "0.5"
