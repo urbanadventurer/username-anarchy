@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with bash-completion
+
+override_dh_installsystemd:
+	dh_installsystemd --no-enable
+override_dh_auto_build:
+	make build
+
+override_dh_fixperms:
+	chmod +x debian/anonsurf/usr/lib/anonsurf/safekill
+
+override_dh_auto_install:
