@@ -1,0 +1,17 @@
+username-anarchy (0.6+parrot3) lory; urgency=medium
+
+  * Fix helper-scripts path.
+
+ -- Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>  Thu, 01 Aug 2024 15:37:56 +0200
+
+username-anarchy (0.6+parrot2) lory; urgency=medium
+
+  * Fix wrong debian/rules.
+
+ -- Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>  Thu, 01 Aug 2024 15:06:57 +0200
+
+username-anarchy (0.6+parrot1) lory; urgency=medium
+
+  * First release.
+
+ -- Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>  Thu, 01 Aug 2024 14:55:36 +0200

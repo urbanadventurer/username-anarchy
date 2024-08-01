@@ -1,0 +1,31 @@
+Source: username-anarchy
+Section: net
+Priority: optional
+Maintainer: Parrot Team <team@parrotsec.org>
+Uploaders: Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>
+Standards-Version: 4.5.0
+Build-Depends:
+ debhelper-compat (= 12)
+Build-Depends-Indep: pkg-config
+Homepage: https://github.com/urbanadventurer/username-anarchy
+
+Package: username-anarchy
+Architecture: any
+Priority: optional
+Depends: ruby
+Description:  Username tool for penetration testing. 
+ Tool to generate common passwords based on usernames or other known information
+ .
+ This is useful for user account/password brute force guessing and username
+ enumeration when usernames are based on the users' names. By attempting a few
+ weak passwords across a large set of user accounts, user account lockout
+ thresholds can be avoided.
+ .
+ Users' names can be identified through a variety of methods:
+ .
+ Web scraping employee names from LinkedIn, Facebook, and other social networks.
+ Extracting metadata from document types such as PDF, Word, Excel, etc.
+ This can be performed with FOCA.
+ .
+ Common aliases, or self chosen usernames, from forums are also included.
+

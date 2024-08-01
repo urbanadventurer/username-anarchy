@@ -1,0 +1,7 @@
+names usr/share/username-anarchy/
+format-plugins.rb usr/share/username-anarchy/
+LICENSE usr/share/username-anarchy/
+README.md usr/share/username-anarchy/
+test-names* usr/share/username-anarchy/
+username-anarchy usr/share/username-anarchy/
+debian/helper-scripts/username-anarchy usr/bin/
