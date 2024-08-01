@@ -1,3 +1,9 @@
+username-anarchy (0.6+parrot2) lory; urgency=medium
+
+  * Fix wrong debian/rules.
+
+ -- Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>  Thu, 01 Aug 2024 15:06:57 +0200
+
 username-anarchy (0.6+parrot1) lory; urgency=medium
 
   * First release.
