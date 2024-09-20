@@ -1,0 +1,15 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: username-anarchy
+Upstream-Contact: urbanadventurer (Andrew Horton)
+Source: https://github.com/urbanadventurer/username-anarchy
+
+Files:
+  debian/*
+Copyright:
+  2024, Lorenzo "Palinuro" Faletra <palinuro@parrotsec.org>
+License: MIT License
+
+Files:
+  *
+Copyright: 2012-2024, urbanadventurer (Andrew Horton)
+License: MIT License
