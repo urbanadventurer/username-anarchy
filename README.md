@@ -1,7 +1,9 @@
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/urbanadventurer/username-anarchy/master/LICENSE) ![Stable Release](https://img.shields.io/badge/stable_release-0.6-blue.svg) [![Repositories](https://repology.org/badge/tiny-repos/username-anarchy.svg)](https://repology.org/project/username-anarchy/versions)
+
 Username Anarchy
 ======================================
 
-* Version: 0.6 (October 2016)
+* Version: 0.6 (20 September 2024)
 * Author: urbanadventurer (Andrew Horton)
 * Homepage: https://www.morningstarsecurity.com/research/username-anarchy
 * Source: https://github.com/urbanadventurer/username-anarchy/
