@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 # UsernameAnarchy - generate usernames
-# by urbanadventurer
+# by urbanadventurer (Andrew Horton)
 # 
 # Anna Boom Key
 #
-
 
 ## set up load paths. add the directory of the file currently being executed to the load path
 real_file_path = File.dirname(File.realpath(__FILE__))
@@ -12,7 +11,7 @@ $LOAD_PATH.unshift(File.expand_path(real_file_path)) unless
     $:.include?(real_file_path) || $LOAD_PATH.include?(File.expand_path(real_file_path))
 
 $ROOT_DIR = File.expand_path(File.dirname(__FILE__)) + "/"
-$VERSION = "0.5"
+$VERSION = "0.6"
 
 require 'optparse'
 require 'getoptlong'
@@ -573,11 +572,33 @@ optparse = OptionParser.new do |opts|
 	  $options[:verbose] = true   
   end  
 
+	opts.separator "Usage examples:
+	
+# You know the name of a user but not the username format
+./username-anarchy anna key
+
+# You know the username format and names of users
+./username-anarchy --input-file ./test-names.txt  --select-format first.last
+
+# You know the server is in France
+./username-anarchy --country france --auto
+
+# List username format plugins
+./username-anarchy --list-formats
+
+# Automatically recognise the username format in use (slow)
+./username-anarchy --recognise j.smith
+
+See README.md for more examples.
+"
+
 	opts.on_tail('-h', '--help') do
 	  puts opts
+		
+
 	  exit
 	end 
-	opts.on_tail
+	opts.on_tail	
 end
 
 begin
