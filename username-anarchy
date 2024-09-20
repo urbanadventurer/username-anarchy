@@ -594,8 +594,6 @@ See README.md for more examples.
 
 	opts.on_tail('-h', '--help') do
 	  puts opts
-		
-
 	  exit
 	end 
 	opts.on_tail	
