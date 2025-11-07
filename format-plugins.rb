@@ -32,6 +32,11 @@ Plugin.define "firstlast" do
 	end
 end
 
+Plugin.define "lastfirst" do
+	def generate(n)
+		n.format_anna("keyanna")
+	end
+end
 
 Plugin.define "first.last" do
 	def generate(n)
