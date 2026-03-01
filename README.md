@@ -1,9 +1,9 @@
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/urbanadventurer/username-anarchy/master/LICENSE) ![Stable Release](https://img.shields.io/badge/stable_release-0.6-blue.svg) [![Repositories](https://repology.org/badge/tiny-repos/username-anarchy.svg)](https://repology.org/project/username-anarchy/versions)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/urbanadventurer/username-anarchy/master/LICENSE) ![Stable Release](https://img.shields.io/badge/stable_release-0.7-blue.svg) [![Repositories](https://repology.org/badge/tiny-repos/username-anarchy.svg)](https://repology.org/project/username-anarchy/versions)
 
 Username Anarchy
 ======================================
 
-* Version: 0.6 (20 September 2024)
+* Version: 0.7 (01 March 2026)
 * Author: urbanadventurer (Andrew Horton)
 * Homepage: https://www.morningstarsecurity.com/research/username-anarchy
 * Source: https://github.com/urbanadventurer/username-anarchy/
@@ -53,7 +53,7 @@ Username Anarchy is a command line tool.
 	    \____:__  /|___:__/(______)|__|    \_____)|___:__//_____|   
 	            \/                                                  
 	Usage: ./username-anarchy [OPTIONS]... [firstname|first last|first middle last]
-	Author: Andrew Horton (urbanadventurer). Version: 0.5
+	Author: Andrew Horton (urbanadventurer). Version: 0.7
 
 	Names:
 	 -i, --input-file FILE     Input list of names. Can be SPACE, CSV or TAB delimited.
@@ -172,6 +172,18 @@ Note that -a or --auto is required when you do not specify any input names.
 	First.Last          	Anna.Key
 	Last                	Key
 	FML                 	ABK
+	first.l             	anna.k
+	LastFirst           	Keyanna
+	Last.First          	Key.Anna
+	LastF               	KeyA
+	first-last          	anna-key
+	last-first          	key-anna
+	f-last              	a-key
+	first-l             	anna-k
+	last-f              	key-a
+	l-first             	k-anna
+	Last-First          	Key-Anna
+	First-Last          	Anna-Key
 
 
 ### Automatically recognise the username format in use
@@ -274,7 +286,7 @@ Username Anarchy provides a method of defining a username format with format str
 
 ### ABK Format
 Username Anarchy provides a method of defining a username format with ABK format which translates
-to format strings.
+to format strings. Separators such as `.` and `-` pass through as literals.
 
 * Anna - %F
 * Boom - %M 
@@ -313,6 +325,3 @@ Name Resources
 * https://secure.wikimedia.org/wikipedia/en/wiki/Capitalization
 * http://cpansearch.perl.org/src/KIMRYAN/Lingua-EN-NameParse-1.28/lib/Lingua/EN/NameParse.pm
 * http://search.cpan.org/~summer/Lingua-EN-NameCase/NameCase.pm
-
-
-
